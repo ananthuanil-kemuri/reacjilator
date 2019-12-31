@@ -86,7 +86,7 @@ const events = async(req, res) => {
     const lang = 'en';
 
     let messages = await getMessage(channel, ts); 
-    postTranslatedMessage(messages, lang, channel);
+    updateWithTranslatedMessage(messages, lang, channel);
     
 };
 
@@ -119,6 +119,18 @@ const postTranslatedMessage = (messages, lang, channel) => {
     } else {
       if(isAlreadyPosted(messages, translation)) return;
       postMessage(message, translation, lang, channel);
+    }
+  });
+};
+
+const updateWithTranslatedMessage = (messages, lang, channel) => {
+  let message = messages[0];
+  translate.translate(message.text, lang, (err, translation) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if(isAlreadyPosted(messages, translation)) return;
+      updateMessage(message, translation, channel);
     }
   });
 };
@@ -181,7 +193,26 @@ const postMessage = async(message, translation, lang, channel) => {
   }
 };
 
-
+const updateMessage = async(message, updatedText, channel) => { 
+  let ts = (message.thread_ts) ? message.thread_ts : message.ts;
+  const text = `${updatedText}\n>${message.text}`
+  
+  const args = {
+    as_user: false,
+    channel: channel,
+    text,
+    ts,
+    token: process.env.SLACK_ACCESS_TOKEN,
+  };
+  
+  const result = await axios.post(`${apiUrl}/chat.update`, qs.stringify(args));
+  
+  try {
+    console.log(result.data);
+  } catch(e) {
+    console.log(e);
+  }
+};
 
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);

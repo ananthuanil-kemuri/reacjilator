@@ -78,16 +78,15 @@ const translate = require('@google-cloud/translate')(googleCredentials);
 /* Events */
 
 const events = async(req, res) => {
-  const {type, user, reaction, item} = req.body.event;
-
-    let country = '';
+  const {channel, ts} = req.body.event;
+    console.log(req.body.event);
 
     // Finding a lang based on a country is not the best way but oh well
     // Matching ISO 639-1 language code
     const lang = 'en';
 
-    let messages = await getMessage(item.channel, item.ts); 
-    postTranslatedMessage(messages, lang, item.channel, reaction);
+    let messages = await getMessage(channel, ts); 
+    postTranslatedMessage(messages, lang, channel);
     
 };
 

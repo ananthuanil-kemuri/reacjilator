@@ -80,36 +80,22 @@ const translate = require('@google-cloud/translate')(googleCredentials);
 const events = async(req, res) => {
   const {type, user, reaction, item} = req.body.event;
 
-  if (type === 'reaction_added') {
-    // If reacji was triggered && it is a correct emoji, translate the message into a specified language
-
     if(item.type !== 'message') {
       return;
     }
 
     let country = '';
 
-    // Check emoji if it is a country flag
-    if(reaction.match(/flag-/)) { // when an emoji has flag- prefix
-      country = reaction.match(/(?!flag-\b)\b\w+/)[0];
-    } else { // jp, fr, etc.
-      const flags = Object.keys(langcode); // array
-      if(flags.includes(reaction)) {
-        country = reaction;
-      } else {
-        return;
-      }
-    }
-
     // Finding a lang based on a country is not the best way but oh well
     // Matching ISO 639-1 language code
     let lang = langcode[country];
     if(!lang) return;
 
+    lang = 'en';
+
     let messages = await getMessage(item.channel, item.ts); 
     postTranslatedMessage(messages, lang, item.channel, reaction);
     
-  }
 };
 
 const getMessage = async(channel, ts) => { 

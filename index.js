@@ -88,10 +88,7 @@ const events = async(req, res) => {
 
     // Finding a lang based on a country is not the best way but oh well
     // Matching ISO 639-1 language code
-    let lang = langcode[country];
-    if(!lang) return;
-
-    lang = 'en';
+    const lang = 'en';
 
     let messages = await getMessage(item.channel, item.ts); 
     postTranslatedMessage(messages, lang, item.channel, reaction);

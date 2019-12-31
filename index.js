@@ -113,7 +113,7 @@ const getMessage = async(channel, ts) => {
   }
 };
 
-const postTranslatedMessage = (messages, lang, channel, emoji) => {
+const postTranslatedMessage = (messages, lang, channel) => {
   
   // Google Translate API
   
@@ -123,7 +123,7 @@ const postTranslatedMessage = (messages, lang, channel, emoji) => {
       console.log(err);
     } else {
       if(isAlreadyPosted(messages, translation)) return;
-      postMessage(message, translation, lang, channel, emoji);
+      postMessage(message, translation, lang, channel);
     }
   });
 };
@@ -143,7 +143,7 @@ const isAlreadyPosted = (messages, translation) => {
 
 
 // Bot posts a message 
-const postMessage = async(message, translation, lang, channel, emoji) => { 
+const postMessage = async(message, translation, lang, channel) => { 
   
   let ts = (message.thread_ts) ? message.thread_ts : message.ts;
 
@@ -153,7 +153,7 @@ const postMessage = async(message, translation, lang, channel, emoji) => {
   if(message.text) {
     attachments = [
       {
-        pretext: `_The message is translated in_ :${emoji}: _(${lang})_`,
+        pretext: `_The message is translated in_: _(${lang})_`,
         text: translation,
         footer: message.text,
         mrkdwn_in: ["text", "pretext"]

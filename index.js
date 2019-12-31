@@ -80,10 +80,6 @@ const translate = require('@google-cloud/translate')(googleCredentials);
 const events = async(req, res) => {
   const {type, user, reaction, item} = req.body.event;
 
-    if(item.type !== 'message') {
-      return;
-    }
-
     let country = '';
 
     // Finding a lang based on a country is not the best way but oh well

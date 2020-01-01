@@ -83,10 +83,13 @@ const events = async(req, res) => {
 
     // Finding a lang based on a country is not the best way but oh well
     // Matching ISO 639-1 language code
-    const lang = 'en';
+    const targetLang = 'en';
 
     let messages = await getMessage(channel, ts); 
-    updateWithTranslatedMessage(messages, lang, channel);
+    const message = messages[0];
+    if (await doesMessageNeedTranslating(message, targetLang)) {
+      updateWithTranslatedMessage(messages, targetLang, channel);
+    }
     
 };
 
@@ -108,11 +111,16 @@ const getMessage = async(channel, ts) => {
   }
 };
 
+const doesMessageNeedTranslating = async(text, targetLang) => {
+  const request = {
+    parent: `projects/${googleCredentials.projectId}`,
+    content: text
+  };
+  const detectedLang = await translate.detectLanguage(request);
+  return targetLang !== detectedLang;
+};
+
 const postTranslatedMessage = (messages, lang, channel) => {
-  
-  // Google Translate API
-  
-  let message = messages[0];
   translate.translate(message.text, lang, (err, translation) => {
     if (err) {
       console.log(err);

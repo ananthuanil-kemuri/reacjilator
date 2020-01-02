@@ -121,7 +121,7 @@ const doesMessageNeedTranslating = async(text, targetLang) => {
   return targetLang !== detectedLang;
 };
 
-const updateWithTranslatedMessage = (message, lang, channel) => {
+const updateWithTranslatedMessage = async(message, lang, channel) => {
   const translateReq = {
     context: message.text,
     targetLanguageCode: lang,

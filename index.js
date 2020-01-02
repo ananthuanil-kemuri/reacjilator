@@ -92,9 +92,9 @@ const events = async(req, res) => {
 
     let messages = await getMessage(channel, ts); 
     const message = messages[0];
-    if (await doesMessageNeedTranslating(message, targetLang)) {
+    // if (await doesMessageNeedTranslating(message, targetLang)) {
       updateWithTranslatedMessage(message, targetLang, channel);
-    }
+    // }
 };
 
 const getMessage = async(channel, ts) => { 
@@ -122,8 +122,9 @@ const doesMessageNeedTranslating = async(text, targetLang) => {
 
 const updateWithTranslatedMessage = async(message, lang, channel) => {
   try {
-    const translation = await googTranslate.translate(message.text, lang);
-    if(isAlreadyPosted(messages, translation)) return;
+    const translation = await googTranslate.translate(message.text, lang)
+    .catch(err => console.error(err));
+    // if(isAlreadyPosted(messages, translation)) return;
     updateMessage(message, translation, channel);
   } catch (err) {
     console.log(err);

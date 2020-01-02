@@ -142,6 +142,24 @@ const setupEventsRoute = (app) => {
     }
   };
 
+  const deleteMessage = async(message, channel) => {
+    const {ts} = message;
+    
+    const args = {
+      channel: channel,
+      ts,
+      token: process.env.SLACK_ACCESS_TOKEN,
+    };
+    
+    const result = await axios.post(`${apiUrl}/chat.delete`, qs.stringify(args));
+    
+    try {
+      console.log(result.data);
+    } catch(e) {
+      console.log(e);
+    }
+  };
+
   const translateMessage = async(message, targetLang) => {
     const translationResp = await googTranslate.translate(message.text, targetLang)
       .catch(err => console.error(err));

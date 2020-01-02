@@ -119,7 +119,8 @@ const getMessage = async(channel, ts) => {
 };
 
 const doesMessageNeedTranslating = async(text, targetLang) => {
-  const detectedLang = await googTranslate.detect(text, targetLang);
+  const detectedLang = await googTranslate.detect(text)
+  .catch(err => console.error(JSON.stringify(err)));
   console.log(`detectedLang: ${JOSN.stringify(detectedLang)}`);
   return targetLang !== detectedLang;
 };

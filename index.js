@@ -84,7 +84,7 @@ app.post('/events', (req, res) => {
 
 const events = async(req, res) => {
   const {channel, hidden, subtype, ts, type} = req.body.event;
-    console.log(`req.body.event: ${req.body.event}`);
+    console.log(`req.body.event: ${JSON.stringify(req.body.event)}`);
     if (type !== 'message') return;
     // Exclude handling of messages for message updates etc and hidden messages
     if (subtype || hidden) return;
@@ -95,9 +95,9 @@ const events = async(req, res) => {
 
     let messages = await getMessage(channel, ts); 
     const message = messages[0];
-    // if (await doesMessageNeedTranslating(message, targetLang)) {
+    if (await doesMessageNeedTranslating(message, targetLang)) {
       updateWithTranslatedMessage(message, targetLang, channel);
-    // }
+    }
 };
 
 const getMessage = async(channel, ts) => { 
@@ -120,6 +120,7 @@ const getMessage = async(channel, ts) => {
 
 const doesMessageNeedTranslating = async(text, targetLang) => {
   const detectedLang = await googTranslate.detect(text, targetLang);
+  console.log(`detectedLang: ${JOSN.stringify(detectedLang)}`);
   return targetLang !== detectedLang;
 };
 
@@ -127,7 +128,7 @@ const updateWithTranslatedMessage = async(message, lang, channel) => {
   try {
     const translationResp = await googTranslate.translate(message.text, lang)
     .catch(err => console.error(err));
-    console.log(translationResp[1]);
+    console.log(JSON.stringify(translationResp[1]));
     const translation = translationResp[0];
     // if(isAlreadyPosted(messages, translation)) return;
     updateMessage(message, translation, channel);

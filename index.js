@@ -50,6 +50,8 @@ const googleCredentials = {
   key: process.env.GOOGLE_KEY
 };
 
+const translateParent = `projects/${googleCredentials.projectId}`;
+
 app.post('/events', (req, res) => {
   switch (req.body.type) {
     case 'url_verification': {
@@ -73,7 +75,7 @@ app.post('/events', (req, res) => {
 });
 
 // Require Google Cloud Translation API 
-const translate = require('@google-cloud/translate')(googleCredentials);
+const googTranslate = require('@google-cloud/translate')(googleCredentials);
 
 /* Events */
 
@@ -88,9 +90,8 @@ const events = async(req, res) => {
     let messages = await getMessage(channel, ts); 
     const message = messages[0];
     if (await doesMessageNeedTranslating(message, targetLang)) {
-      updateWithTranslatedMessage(messages, targetLang, channel);
+      updateWithTranslatedMessage(message, targetLang, channel);
     }
-    
 };
 
 const getMessage = async(channel, ts) => { 
@@ -113,34 +114,26 @@ const getMessage = async(channel, ts) => {
 
 const doesMessageNeedTranslating = async(text, targetLang) => {
   const request = {
-    parent: `projects/${googleCredentials.projectId}`,
+    parent: translateParent,
     content: text
   };
-  const detectedLang = await translate.detectLanguage(request);
+  const detectedLang = await googTranslate.detectLanguage(request);
   return targetLang !== detectedLang;
 };
 
-const postTranslatedMessage = (messages, lang, channel) => {
-  translate.translate(message.text, lang, (err, translation) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if(isAlreadyPosted(messages, translation)) return;
-      postMessage(message, translation, lang, channel);
-    }
-  });
-};
-
-const updateWithTranslatedMessage = (messages, lang, channel) => {
-  let message = messages[0];
-  translate.translate(message.text, lang, (err, translation) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if(isAlreadyPosted(messages, translation)) return;
-      updateMessage(message, translation, channel);
-    }
-  });
+const updateWithTranslatedMessage = (message, lang, channel) => {
+  const translateReq = {
+    context: message.text,
+    targetLanguageCode: lang,
+    parent: translateParent
+  };
+  try {
+    const translation = await googTranslate.translateText(translateReq);
+    if(isAlreadyPosted(messages, translation)) return;
+    updateMessage(message, translation, channel);
+  } except (err) {
+    console.log(err);
+  }
 };
 
 const isAlreadyPosted = (messages, translation) => {

@@ -131,7 +131,7 @@ const updateWithTranslatedMessage = async(message, lang, channel) => {
     const translation = await googTranslate.translateText(translateReq);
     if(isAlreadyPosted(messages, translation)) return;
     updateMessage(message, translation, channel);
-  } except (err) {
+  } catch (err) {
     console.log(err);
   }
 };

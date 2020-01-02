@@ -41,14 +41,14 @@ const setupEventsRoute = (app) => {
       // Exclude handling of messages for message updates etc and hidden messages
       if (bot_id || subtype || hidden) return;
   
-      // Finding a lang based on a country is not the best way but oh well
       // Matching ISO 639-1 language code
       const targetLang = 'en';
   
       let messages = await getMessage(channel, ts); 
       const message = messages[0];
       if (await doesMessageNeedTranslating(message.text, targetLang)) {
-        updateWithTranslatedMessage(message, targetLang, channel);
+        // updateWithTranslatedMessage(message, targetLang, channel);
+        postTranslatedMessage(message, targetLang, channel);
       }
   };
   
@@ -81,9 +81,7 @@ const setupEventsRoute = (app) => {
   const updateWithTranslatedMessage = async(message, lang, channel) => {
     try {
       const translation = await translateMessage(message, lang);
-      // if(isAlreadyPosted(messages, translation)) return;
-      postMessage(message, translation, channel);
-      // updateMessage(message, translation, channel);
+      updateMessage(message, translation, channel);
     } catch (err) {
       console.log(err);
     }
@@ -94,16 +92,14 @@ const setupEventsRoute = (app) => {
     const text = `${updatedText}\n>${message.text}`
     
     const args = {
-      as_user: true,
+      // as_user: true,
       channel: channel,
       text,
       ts,
       token: process.env.SLACK_ACCESS_TOKEN,
-      username: message.user
+      // username: message.user
     };
-    
     const result = await axios.post(`${apiUrl}/chat.postMessage`, qs.stringify(args));
-    
     try {
       console.log(result.data);
     } catch(e) {
@@ -114,7 +110,6 @@ const setupEventsRoute = (app) => {
   const postTranslatedMessage = async(message, lang, channel) => {
     try {
       const translation = await translateMessage(message, lang);
-      // if(isAlreadyPosted(messages, translation)) return;
       postMessage(message, translation, channel);
     } catch (err) {
       console.log(err);

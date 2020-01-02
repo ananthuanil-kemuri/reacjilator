@@ -19,8 +19,8 @@
   */
 
  const express = require('express');
- const bodyParser = require('body-parser');
  const dotenv = require('dotenv');
+ const setupBodyParser = require('./setupBodyParser');
  const signature = require('./verifySignature');
  const langcode = require('./langcode');
  const axios = require('axios'); 
@@ -46,16 +46,7 @@
  * that you need to use to verify the signature
  */
 
-const rawBodyBuffer = (req, res, buf, encoding) => {
-  if (buf && buf.length) {
-    req.rawBody = buf.toString(encoding || 'utf8');
-  }
-};
-
-app.use(bodyParser.urlencoded({verify: rawBodyBuffer, extended: true }));
-app.use(bodyParser.json({ verify: rawBodyBuffer }));
-
-
+setupBodyParser(app);
 
 const translateParent = `projects/${googleCredentials.projectId}`;
 

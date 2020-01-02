@@ -20,11 +20,13 @@
 
  const express = require('express');
  const bodyParser = require('body-parser');
+ const dotenv = require('dotenv');
  const signature = require('./verifySignature');
  const langcode = require('./langcode');
  const axios = require('axios'); 
  const qs = require('qs');
  
+ dotenv.config();
  const apiUrl = 'https://slack.com/api';
 
  const projectId = process.env.GOOGLE_PROJECT_ID;

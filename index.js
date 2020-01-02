@@ -26,6 +26,15 @@
  const qs = require('qs');
  
  const apiUrl = 'https://slack.com/api';
+
+ const projectId = process.env.GOOGLE_PROJECT_ID;
+ const googleCredentials = {
+   projectId,
+   key: process.env.GOOGLE_KEY
+ };
+
+ const {Translate} = require('@google-cloud/translate').v2;
+ const googTranslate = new Translate({ projectId });
  
  const app = express();
 
@@ -45,10 +54,6 @@ app.use(bodyParser.urlencoded({verify: rawBodyBuffer, extended: true }));
 app.use(bodyParser.json({ verify: rawBodyBuffer }));
 
 
-const googleCredentials = {
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  key: process.env.GOOGLE_KEY
-};
 
 const translateParent = `projects/${googleCredentials.projectId}`;
 
@@ -74,8 +79,6 @@ app.post('/events', (req, res) => {
   }
 });
 
-// Require Google Cloud Translation API 
-const googTranslate = require('@google-cloud/translate')(googleCredentials);
 
 /* Events */
 

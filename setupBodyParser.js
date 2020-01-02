@@ -12,4 +12,3 @@ const setupBodyParser = (app) => {
 }
 
 module.exports = setupBodyParser
-

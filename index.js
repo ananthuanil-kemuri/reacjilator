@@ -34,7 +34,7 @@
  };
 
  const {Translate} = require('@google-cloud/translate').v2;
- const googTranslate = new Translate({ projectId });
+ const googTranslate = new Translate({ ...googleCredentials });
  
  const app = express();
 
@@ -116,11 +116,7 @@ const getMessage = async(channel, ts) => {
 };
 
 const doesMessageNeedTranslating = async(text, targetLang) => {
-  const request = {
-    parent: translateParent,
-    content: text
-  };
-  const detectedLang = await googTranslate.detectLanguage(request);
+  const detectedLang = await googTranslate.detect(text, targetLang);
   return targetLang !== detectedLang;
 };
 

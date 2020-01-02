@@ -35,11 +35,11 @@ const setupEventsRoute = (app) => {
     }
   });
   const events = async(req, res) => {
-    const {channel, hidden, subtype, ts, type} = req.body.event;
+    const {bot_id, channel, hidden, subtype, ts, type} = req.body.event;
       console.log(`req.body.event: ${JSON.stringify(req.body.event)}`);
       if (type !== 'message') return;
       // Exclude handling of messages for message updates etc and hidden messages
-      if (subtype || hidden) return;
+      if (bot_id || subtype || hidden) return;
   
       // Finding a lang based on a country is not the best way but oh well
       // Matching ISO 639-1 language code
@@ -80,12 +80,42 @@ const setupEventsRoute = (app) => {
   
   const updateWithTranslatedMessage = async(message, lang, channel) => {
     try {
-      const translationResp = await googTranslate.translate(message.text, lang)
-      .catch(err => console.error(err));
-      console.log(JSON.stringify(translationResp[1]));
-      const translation = translationResp[0];
+      const translation = await translateMessage(message, lang);
       // if(isAlreadyPosted(messages, translation)) return;
-      updateMessage(message, translation, channel);
+      postMessage(message, translation, channel);
+      // updateMessage(message, translation, channel);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const postMessage = async(message, updatedText, channel) => {
+    const {ts} = message;
+    const text = `${updatedText}\n>${message.text}`
+    
+    const args = {
+      as_user: true,
+      channel: channel,
+      text,
+      ts,
+      token: process.env.SLACK_ACCESS_TOKEN,
+      username: message.user
+    };
+    
+    const result = await axios.post(`${apiUrl}/chat.postMessage`, qs.stringify(args));
+    
+    try {
+      console.log(result.data);
+    } catch(e) {
+      console.log(e);
+    }
+  };
+
+  const postTranslatedMessage = async(message, lang, channel) => {
+    try {
+      const translation = await translateMessage(message, lang);
+      // if(isAlreadyPosted(messages, translation)) return;
+      postMessage(message, translation, channel);
     } catch (err) {
       console.log(err);
     }
@@ -96,7 +126,7 @@ const setupEventsRoute = (app) => {
     const text = `${updatedText}\n>${message.text}`
     
     const args = {
-      as_user: false,
+      as_user: true,
       channel: channel,
       text,
       ts,
@@ -111,6 +141,13 @@ const setupEventsRoute = (app) => {
       console.log(e);
     }
   };
+
+  const translateMessage = async(message, targetLang) => {
+    const translationResp = await googTranslate.translate(message.text, targetLang)
+      .catch(err => console.error(err));
+    console.log(JSON.stringify(translationResp[1]));
+    return translationResp[0];
+  }
   
   const isAlreadyPosted = (messages, translation) => {
     // To avoid posting same messages several times, make sure if a same message in the thread doesn't exist
@@ -124,51 +161,6 @@ const setupEventsRoute = (app) => {
       return true;
     }
   };
-  
-  // Bot posts a message 
-  const postMessage = async(message, translation, lang, channel) => { 
-    
-    let ts = (message.thread_ts) ? message.thread_ts : message.ts;
-  
-    // TODO - Once Block Kit supports the "attachment" bar, switch this part to Block Kit!
-    
-    let attachments = [];
-    if(message.text) {
-      attachments = [
-        {
-          pretext: `_The message is translated in_: _(${lang})_`,
-          text: translation,
-          footer: message.text,
-          mrkdwn_in: ["text", "pretext"]
-        }
-      ];
-    } else {
-      attachments = [
-        {
-          pretext: '_Sorry, the language is not supported!_ :persevere:',
-          mrkdwn_in: ["text", "pretext"]
-        }
-      ];
-    }
-    
-    const args = {
-      token: process.env.SLACK_ACCESS_TOKEN,
-      channel: channel,
-      attachments: JSON.stringify(attachments),
-      as_user: false,
-      username: 'Reacjilator Bot',
-      thread_ts: ts
-    };
-    
-    const result = await axios.post(`${apiUrl}/chat.postMessage`, qs.stringify(args));
-    
-    try {
-      console.log(result.data);
-    } catch(e) {
-      console.log(e);
-    }
-  };
-};
-
+}
 
 module.exports = setupEventsRoute

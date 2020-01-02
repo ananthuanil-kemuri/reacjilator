@@ -23,7 +23,6 @@ const dotenv = require('dotenv');
 
 const setupBodyParser = require('./setupBodyParser');
 const setupEventsRoute = require('./setupEventsRoute');
-const langcode = require('./langcode');
 
 dotenv.config();
 

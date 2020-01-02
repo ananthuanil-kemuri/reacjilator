@@ -95,7 +95,7 @@ const events = async(req, res) => {
 
     let messages = await getMessage(channel, ts); 
     const message = messages[0];
-    if (await doesMessageNeedTranslating(message, targetLang)) {
+    if (await doesMessageNeedTranslating(message.text, targetLang)) {
       updateWithTranslatedMessage(message, targetLang, channel);
     }
 };
@@ -119,8 +119,8 @@ const getMessage = async(channel, ts) => {
 };
 
 const doesMessageNeedTranslating = async(text, targetLang) => {
-  const detectedLang = await googTranslate.detect(text)
-  .catch(err => console.error(JSON.stringify(err)));
+  const detectedLang = await googTranslate.detect(text);
+    .catch(err => console.error(JSON.stringify(err)));
   console.log(`detectedLang: ${JSON.stringify(detectedLang)}`);
   return targetLang !== detectedLang;
 };

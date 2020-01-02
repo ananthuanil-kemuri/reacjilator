@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nf start",
+    "start-dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -21,5 +22,8 @@
     "express": "^4.16.4",
     "qs": "^6.7.0",
     "tsscmp": "^1.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }

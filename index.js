@@ -83,8 +83,11 @@ app.post('/events', (req, res) => {
 /* Events */
 
 const events = async(req, res) => {
-  const {channel, ts} = req.body.event;
-    console.log(req.body.event);
+  const {channel, hidden, subtype, ts, type} = req.body.event;
+    console.log(`req.body.event: ${req.body.event}`);
+    if (type !== 'message') return;
+    // Exclude handling of messages for message updates etc and hidden messages
+    if (subtype || hidden) return;
 
     // Finding a lang based on a country is not the best way but oh well
     // Matching ISO 639-1 language code

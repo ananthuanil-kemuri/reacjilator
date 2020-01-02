@@ -200,7 +200,7 @@ const postMessage = async(message, translation, lang, channel) => {
 };
 
 const updateMessage = async(message, updatedText, channel) => { 
-  let ts = (message.thread_ts) ? message.thread_ts : message.ts;
+  const {ts} = message;
   const text = `${updatedText}\n>${message.text}`
   
   const args = {

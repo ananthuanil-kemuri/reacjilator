@@ -84,7 +84,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
   const postTranslatedMessage = async(origText, ts, targetLang, channel, is_in_thread) => {
     try {
       const { translation, sourceLanguage } = await translateText(origText, targetLang);
-      const footerText = `Translated from ${langCodeToName[sourceLanguage]} to ${langCodeToName[targetLang]}`;
+      const footerText = `Translated from ${langCodeToName(sourceLanguage)} to ${langCodeToName(targetLang)}`;
       const attachments = [{
         text: origText,
         footer: footerText,

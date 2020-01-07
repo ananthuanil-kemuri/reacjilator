@@ -47,7 +47,6 @@ const setupEventsRoute = (app) => {
       let messages = await getMessage(channel, ts); 
       const message = messages[0];
       if (await doesMessageNeedTranslating(message.text, targetLang)) {
-        // updateWithTranslatedMessage(message, targetLang, channel);
         postTranslatedMessage(message, targetLang, channel);
       }
   };
@@ -81,7 +80,7 @@ const setupEventsRoute = (app) => {
   const updateWithTranslatedMessage = async(message, lang, channel) => {
     try {
       const translation = await translateMessage(message, lang);
-      updateMessage(message, translation, channel);
+      updateMessage(message, message.text, translation, channel);
     } catch (err) {
       console.log(err);
     }
@@ -116,14 +115,21 @@ const setupEventsRoute = (app) => {
     }
   };
   
-  const updateMessage = async(message, updatedText, channel) => {
+  const updateMessage = async(message, updatedText, footer, channel) => {
     const {ts} = message;
-    const text = `${updatedText}\n>${message.text}`
-    
+    const attachments = [
+      {
+        // pretext: `_The message is translated in_ :${emoji}: _(${lang})_`,
+        text: updatedText,
+        footer,
+        mrkdwn_in: ["text", "pretext"]
+      }
+    ];
     const args = {
       as_user: true,
+      attachments: JSON.stringify(attachments),
       channel: channel,
-      text,
+      text: updatedText,
       ts,
       token: process.env.SLACK_ACCESS_TOKEN,
     };

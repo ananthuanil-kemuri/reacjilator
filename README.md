@@ -1,13 +1,14 @@
-# Reacjilator for Slack
+# Slacklator
 
-> :jp: README in Japanese is available: 日本語 README は[こちら](README_ja.md) 
+Slacklator translates a message that is not in English to English by making a post below the original message.
 
+Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
 
+## Development
 
-Reacjilator translates a message when a user reacted with an emoji (*"reacji"*). For example, when a message gets a `:flag-jp:` reacji, this bot translate the original message to Japanese and post it under the message thread.
-
-![Reacjilator demo](tutorial_images/reacjilator-demo.gif)
-
+1. Install (ngrok)[https://dashboard.ngrok.com/get-started] to expose a URL that forwards to the app running locally.
+2. `npm run start-dev`
+3. [path to ngrok]/ngrok http 5000
 
 
 ## Set Up Your Slack App

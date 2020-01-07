@@ -42,16 +42,17 @@ const setupEventsRoute = (app, slackAPIURL) => {
   
       // Matching ISO 639-1 language code
       const targetLang = 'en';
-      let parent_msg_ts;
+      let parent_msg_ts, is_in_thread;
       if (thread_ts) {
         const messages = await getMessages(channel, thread_ts);
         const parentMsg = messages.find(msg => msg.ts === thread_ts);
         parent_msg_ts = parentMsg.ts;
+        is_in_thread = true
       } else {
         parent_msg_ts = ts
       }
       if (await doesMessageNeedTranslating(text, targetLang)) {
-        postTranslatedMessage(text, parent_msg_ts, targetLang, channel, true);
+        postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread);
       }
   };
   

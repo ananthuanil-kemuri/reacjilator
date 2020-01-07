@@ -5,9 +5,7 @@ const {Translate} = require('@google-cloud/translate').v2;
 const langCodeToName = require('./langCodeToName');
 const signature = require('./verifySignature');
 
-const apiUrl = 'https://slack.com/api';
-
-const setupEventsRoute = (app) => {
+const setupEventsRoute = (app, slackAPIURL) => {
   const googleCredentials = {
     projectId: process.env.GOOGLE_PROJECT_ID,
     key: process.env.GOOGLE_KEY
@@ -61,7 +59,7 @@ const setupEventsRoute = (app) => {
       inclusive: true
     };
     
-    const result = await axios.post(`${apiUrl}/conversations.replies`, qs.stringify(args));
+    const result = await axios.post(`${slackAPIURL}/conversations.replies`, qs.stringify(args));
     
     try {
       return result.data.messages; 
@@ -87,7 +85,7 @@ const setupEventsRoute = (app) => {
       ts,
       token: process.env.SLACK_ACCESS_TOKEN,
     };
-    const result = await axios.post(`${apiUrl}/chat.postMessage`, qs.stringify(args));
+    const result = await axios.post(`${slackAPIURL}/chat.postMessage`, qs.stringify(args));
     try {
       console.log(result.data);
     } catch(e) {

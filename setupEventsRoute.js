@@ -34,7 +34,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
     }
   });
   const events = async(req, res) => {
-    const {bot_id, channel, hidden, subtype, ts, type} = req.body.event;
+    const {bot_id, channel, hidden, subtype, text, thread_ts, ts, type} = req.body.event;
       console.log(`req.body.event: ${JSON.stringify(req.body.event)}`);
       if (type !== 'message') return;
       // Exclude handling of messages for message updates etc and hidden messages
@@ -42,15 +42,20 @@ const setupEventsRoute = (app, slackAPIURL) => {
   
       // Matching ISO 639-1 language code
       const targetLang = 'en';
-  
-      let messages = await getMessage(channel, ts); 
-      const message = messages[0];
-      if (await doesMessageNeedTranslating(message.text, targetLang)) {
-        postTranslatedMessage(message, targetLang, channel);
+      let parent_msg_ts;
+      if (thread_ts) {
+        const messages = await getMessages(channel, thread_ts);
+        const parentMsg = messages.find(msg => msg.ts === thread_ts);
+        parent_msg_ts = parentMsg.ts;
+      } else {
+        parent_msg_ts = ts
+      }
+      if (await doesMessageNeedTranslating(text, targetLang)) {
+        postTranslatedMessage(text, parent_msg_ts, targetLang, channel, true);
       }
   };
   
-  const getMessage = async(channel, ts) => { 
+  const getMessages = async(channel, ts) => { 
     const args = {
       token: process.env.SLACK_ACCESS_TOKEN,
       channel: channel,
@@ -76,39 +81,45 @@ const setupEventsRoute = (app, slackAPIURL) => {
     return targetLang !== detectedLang;
   };
 
-  const postMessage = async(message, text, channel, attachments) => {
-    const {ts} = message;
+  const postTranslatedMessage = async(origText, ts, targetLang, channel, is_in_thread) => {
+    try {
+      const { translation, sourceLanguage } = await translateText(origText, targetLang);
+      const footerText = `Translated from ${langCodeToName[sourceLanguage]} to ${langCodeToName[targetLang]}`;
+      const attachments = [{
+        text: origText,
+        footer: footerText,
+      }]
+      postMessage(translation, ts, channel, attachments, is_in_thread);
+    } catch (err) {
+      console.log('post translated msg error', channel)
+      console.log(err);
+    }
+  };
+
+  const postMessage = async(text, ts, channel, attachments, is_in_thread) => {
     const args = {
       attachments: JSON.stringify(attachments),
       channel,
       text,
-      ts,
       token: process.env.SLACK_ACCESS_TOKEN,
     };
+    if (is_in_thread) {
+      args.thread_ts = ts;
+    } else {
+      args.ts = ts;
+    }
     const result = await axios.post(`${slackAPIURL}/chat.postMessage`, qs.stringify(args));
+    console.log('channel', channel);
     try {
-      console.log(result.data);
+      console.log('postMessage result.data', result.data);
     } catch(e) {
       console.log(e);
     }
   };
 
-  const postTranslatedMessage = async(message, targetLang, channel) => {
-    try {
-      const { translation, sourceLanguage } = await translateMessage(message, targetLang);
-      const footerText = `Translated from ${langCodeToName[sourceLanguage]} to ${langCodeToName[targetLang]}`;
-      const attachments = [{
-        text: message.text,
-        footer: footerText,
-      }]
-      postMessage(message, translation, channel, attachments);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
-  const translateMessage = async(message, targetLang) => {
-    const translationResp = await googTranslate.translate(message.text, targetLang)
+  const translateText = async(text, targetLang) => {
+    const translationResp = await googTranslate.translate(text, targetLang)
       .catch(err => console.error(err));
     console.log(JSON.stringify(translationResp[1]));
     return {

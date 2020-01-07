@@ -2,6 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 const {Translate} = require('@google-cloud/translate').v2;
 
+const langCodeToName = require('./langCodeToName');
 const signature = require('./verifySignature');
 
 const apiUrl = 'https://slack.com/api';
@@ -97,7 +98,7 @@ const setupEventsRoute = (app) => {
   const postTranslatedMessage = async(message, targetLang, channel) => {
     try {
       const { translation, sourceLanguage } = await translateMessage(message, targetLang);
-      const footerText = `Translated from ${sourceLanguage} to ${targetLang}`;
+      const footerText = `Translated from ${langCodeToName[sourceLanguage]} to ${langCodeToName[targetLang]}`;
       const attachments = [{
         text: message.text,
         footer: footerText,

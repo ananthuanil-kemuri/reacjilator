@@ -76,27 +76,15 @@ const setupEventsRoute = (app) => {
     const detectedLang = detectedLangResp[0].language;
     return targetLang !== detectedLang;
   };
-  
-  const updateWithTranslatedMessage = async(message, lang, channel) => {
-    try {
-      const translation = await translateMessage(message, lang);
-      updateMessage(message, message.text, translation, channel);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
-  const postMessage = async(message, updatedText, channel) => {
+  const postMessage = async(message, text, channel, attachments) => {
     const {ts} = message;
-    const text = `${updatedText}\n>${message.text}`
-    
     const args = {
-      // as_user: true,
-      channel: channel,
+      attachments: JSON.stringify(attachments),
+      channel,
       text,
       ts,
       token: process.env.SLACK_ACCESS_TOKEN,
-      // username: message.user
     };
     const result = await axios.post(`${apiUrl}/chat.postMessage`, qs.stringify(args));
     try {
@@ -106,58 +94,17 @@ const setupEventsRoute = (app) => {
     }
   };
 
-  const postTranslatedMessage = async(message, lang, channel) => {
+  const postTranslatedMessage = async(message, targetLang, channel) => {
     try {
-      const translation = await translateMessage(message, lang);
-      postMessage(message, translation, channel);
+      const { translation, sourceLanguage } = await translateMessage(message, targetLang);
+      const footerText = `Translated from ${sourceLanguage} to ${targetLang}`;
+      const attachments = [{
+        text: message.text,
+        footer: footerText,
+      }]
+      postMessage(message, translation, channel, attachments);
     } catch (err) {
       console.log(err);
-    }
-  };
-  
-  const updateMessage = async(message, updatedText, footer, channel) => {
-    const {ts} = message;
-    const attachments = [
-      {
-        // pretext: `_The message is translated in_ :${emoji}: _(${lang})_`,
-        text: updatedText,
-        footer,
-        mrkdwn_in: ["text", "pretext"]
-      }
-    ];
-    const args = {
-      as_user: true,
-      attachments: JSON.stringify(attachments),
-      channel: channel,
-      text: updatedText,
-      ts,
-      token: process.env.SLACK_ACCESS_TOKEN,
-    };
-    
-    const result = await axios.post(`${apiUrl}/chat.update`, qs.stringify(args));
-    
-    try {
-      console.log(result.data);
-    } catch(e) {
-      console.log(e);
-    }
-  };
-
-  const deleteMessage = async(message, channel) => {
-    const {ts} = message;
-    
-    const args = {
-      channel: channel,
-      ts,
-      token: process.env.SLACK_ACCESS_TOKEN,
-    };
-    
-    const result = await axios.post(`${apiUrl}/chat.delete`, qs.stringify(args));
-    
-    try {
-      console.log(result.data);
-    } catch(e) {
-      console.log(e);
     }
   };
 
@@ -165,21 +112,11 @@ const setupEventsRoute = (app) => {
     const translationResp = await googTranslate.translate(message.text, targetLang)
       .catch(err => console.error(err));
     console.log(JSON.stringify(translationResp[1]));
-    return translationResp[0];
+    return {
+      translation: translationResp[0],
+      sourceLanguage: translationResp[1].data.translations[0].detectedSourceLanguage
+    };
   }
-  
-  const isAlreadyPosted = (messages, translation) => {
-    // To avoid posting same messages several times, make sure if a same message in the thread doesn't exist
-    let alreadyPosted = false;
-    messages.forEach(messageInTheThread => {
-      if (!alreadyPosted && messageInTheThread.subtype && messageInTheThread.attachments[0].text === translation) {
-        alreadyPosted = true;
-      }
-    });
-    if (alreadyPosted) {
-      return true;
-    }
-  };
 }
 
 module.exports = setupEventsRoute

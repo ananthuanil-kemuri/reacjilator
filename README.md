@@ -9,6 +9,7 @@ Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
 1. Install (ngrok)[https://dashboard.ngrok.com/get-started] to expose a URL that forwards to the app running locally.
 2. `npm run start-dev`
 3. [path to ngrok]/ngrok http 5000
+4. Get the forwarded https URL, append `/events`, and set it as the Request URL under `api.slack.com/apps` -> [App Name] -> Event Subscriptions. 
 
 
 ## Set Up Your Slack App

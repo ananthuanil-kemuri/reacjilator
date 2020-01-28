@@ -58,7 +58,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
   
   const getMessages = async(channel, ts) => { 
     const args = {
-      token: process.env.SLACK_ACCESS_TOKEN,
+      token: process.env.SLACK_OAUTH_ACCESS_TOKEN,
       channel: channel,
       ts: ts,
       limit: 1,
@@ -102,7 +102,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
       attachments: JSON.stringify(attachments),
       channel,
       text,
-      token: process.env.SLACK_ACCESS_TOKEN,
+      token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
     };
     if (is_in_thread) {
       args.thread_ts = ts;

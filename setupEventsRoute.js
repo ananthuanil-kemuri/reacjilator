@@ -66,12 +66,8 @@ const setupEventsRoute = (app, slackAPIURL) => {
     };
     
     const result = await axios.post(`${slackAPIURL}/conversations.replies`, qs.stringify(args));
-    
-    try {
-      return result.data.messages; 
-    } catch(e) {
-      console.log(e);
-    }
+    if (!result.data.ok) throw JSON.stringify(result.data)
+    return result.data.messages;
   };
   
   const doesMessageNeedTranslating = async(text, targetLang) => {

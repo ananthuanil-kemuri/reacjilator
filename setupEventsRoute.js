@@ -97,7 +97,8 @@ const setupEventsRoute = (app, slackAPIURL) => {
     const args = {
       attachments: JSON.stringify(attachments),
       channel,
-      text,
+      link_names: true,
+      text: formatTextForMentions(text),
       token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
     };
     if (is_in_thread) {
@@ -114,6 +115,9 @@ const setupEventsRoute = (app, slackAPIURL) => {
     }
   };
 
+  const formatTextForMentions = (text) => {
+    return text.replace(/<@ /g, '<@');
+  }
 
   const translateText = async(text, targetLang) => {
     const translationResp = await googTranslate.translate(text, targetLang)

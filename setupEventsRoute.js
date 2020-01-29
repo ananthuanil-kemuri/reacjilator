@@ -4,6 +4,7 @@ const {Translate} = require('@google-cloud/translate').v2;
 
 const langCodeToName = require('./langCodeToName');
 const signature = require('./verifySignature');
+const { formatText } = require('./base/formatting');
 
 const setupEventsRoute = (app, slackAPIURL) => {
   const googleCredentials = {
@@ -98,7 +99,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
       attachments: JSON.stringify(attachments),
       channel,
       link_names: true,
-      text: formatTextForMentions(text),
+      text: formatText(text),
       token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
     };
     if (is_in_thread) {
@@ -114,10 +115,6 @@ const setupEventsRoute = (app, slackAPIURL) => {
       console.log(e);
     }
   };
-
-  const formatTextForMentions = (text) => {
-    return text.replace(/<@ /g, '<@');
-  }
 
   const translateText = async(text, targetLang) => {
     const translationResp = await googTranslate.translate(text, targetLang)

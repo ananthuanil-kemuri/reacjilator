@@ -48,16 +48,16 @@ Get Your Slack credentials at **Basic Information**, auth token at **OAuth & Per
 Get your Google Cloud project ID and API key at [cloud.google.com](https://cloud.google.com/translate/docs/getting-started)
 
 
-## Deployment Examples
+## Deployment
 
-### Deploy on Google Cloud Functions
+### Heroku
+
+1. `git remote set-url heroku https://git.heroku.com/slack-reacjilator.git` (first time only)
+2. `git push heroku`
+3. Set the env vars in [Heroku](https://dashboard.heroku.com/apps/slack-reacjilator/settings)
+
+*When you deploy to Heroku, the request URL for the **Event Subscription** section on Slack App config page would be: `https://slack-reacjilator.herokuapp.com/events`*
+
+### Google Cloud Functions
 
 Please refer the `google-cloud-functions` branch.
-
-### Deploy on Heroku
-
-Use this Heroku button to deploy to Heroku server. You just need to fill out the env vars with the info. No need to create an `.env` file.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/slackAPI/reacjilator)
-
-*When you deploy to Heroku, the request URL for the **Event Subscription** section on Slack App config page would be: `https://the-name-you-picked.herokuapp.com/events`*

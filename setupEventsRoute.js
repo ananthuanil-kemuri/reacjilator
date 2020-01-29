@@ -58,7 +58,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
   
   const getMessages = async(channel, ts) => { 
     const args = {
-      token: process.env.SLACK_OAUTH_ACCESS_TOKEN,
+      token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
       channel: channel,
       ts: ts,
       limit: 1,

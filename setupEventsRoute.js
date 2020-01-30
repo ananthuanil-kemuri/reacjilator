@@ -45,32 +45,31 @@ const setupEventsRoute = (app, slackAPIURL) => {
       const targetLang = 'en';
       let parent_msg_ts, is_in_thread;
       if (thread_ts) {
-        const messages = await getMessages(channel, thread_ts);
+        const messages = await getThreadMessages(channel, thread_ts);
         const parentMsg = messages.find(msg => msg.ts === thread_ts);
         parent_msg_ts = parentMsg.ts;
         is_in_thread = true
       } else {
-        parent_msg_ts = ts
+        parent_msg_ts = ts;
       }
       if (await doesMessageNeedTranslating(text, targetLang)) {
         postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread);
       }
   };
   
-  const getMessages = async(channel, ts) => { 
+  const getThreadMessages = async(channel, ts) => { 
     const args = {
       token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
-      channel: channel,
+      channel,
       ts: ts,
       limit: 1,
       inclusive: true
     };
-    
     const result = await axios.post(`${slackAPIURL}/conversations.replies`, qs.stringify(args));
     if (!result.data.ok) throw JSON.stringify(result.data)
     return result.data.messages;
   };
-  
+
   const doesMessageNeedTranslating = async(text, targetLang) => {
     const detectedLangResp = await googTranslate.detect(text)
       .catch(err => console.error(JSON.stringify(err)));

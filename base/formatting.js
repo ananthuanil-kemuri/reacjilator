@@ -6,11 +6,11 @@ const formatText = (text) => {
 
 const formatTextForMentions = (text) => {
   // To format user mentions correctly, they need to be of form "<@U024BE7LH>": https://api.slack.com/reference/surfaces/formatting#mentioning-users
-  const formatForUserMentions = (text) => text.replace(/<@ /g, '<@');
+  const formatForUserMentions = (text) => text.replace(/<\s*@\s*/g, stripWhitespace);
   // Links to public channels should look like "<#C024BE7LR>" or "<#C024BE7LR|some-channel>"
   const formatForChannelMentions = (text) => text.replace(/<\s*#\s*[A-Z0-9]*\s*\|\s*[a-zA-Z0-9-]*\s*>/g, stripWhitespace);
   // @here and @channel should look like <!here> and <!channel>, respectively
-  const formatForSpecialMentions = (text) => text.replace(/<! (here|channel)>/, stripWhitespace);
+  const formatForSpecialMentions = (text) => text.replace(/<\s*!\s*(here|channel)\s*>/, stripWhitespace);
   return formatForSpecialMentions(formatForChannelMentions(formatForUserMentions(text)));
 }
 

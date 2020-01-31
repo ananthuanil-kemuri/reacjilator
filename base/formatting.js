@@ -15,7 +15,7 @@ const formatTextForMentions = (text) => {
 }
 
 const formatTextForEmojis = (text) => {
-  return text.replace(/: [a-z_]*:/g, stripWhitespace);
+  return text.replace(/:\s*[a-z_0-9-]*\s*:/g, stripWhitespace);
 };
 
 const formatTextForLinks = (text) => {

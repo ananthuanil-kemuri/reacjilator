@@ -56,3 +56,12 @@ test('formatText formats links properly', () => {
   }
 })
 
+test('formatText formats strikethroughs properly', () => {
+  const inputStrikethroughsExpectedOutput = {
+    '~ Wear a mask ~': '~Wear a mask~',
+  }
+  for (const [input, expectedOutput] of Object.entries(inputStrikethroughsExpectedOutput)) {
+    expect(formatText(input)).toBe(expectedOutput);
+  }
+})
+

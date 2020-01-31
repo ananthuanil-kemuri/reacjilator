@@ -10,6 +10,17 @@ test('formatText formats user mentions properly', () => {
   }
 })
 
+test('formatText formats user channel properly', () => {
+  const inputChannelMentionsExpectedOutput = {
+    'Wear a mask <# CS5MGR57X | reacjilator-test>': 'Wear a mask <#CS5MGR57X|reacjilator-test>',
+    '<#CRSSAFLBU | language-translation-bot-test> Wearing a mask <# CS7GN1BSB | slack-translator-test>': '<#CRSSAFLBU|language-translation-bot-test> Wearing a mask <#CS7GN1BSB|slack-translator-test>',
+    '<# CS7S1ABGE | lingvanex-test> <#CRSSAFLBU | language-translation-bot-test> Wearing a mask': '<#CS7S1ABGE|lingvanex-test> <#CRSSAFLBU|language-translation-bot-test> Wearing a mask'
+  }
+  for (const [input, expectedOutput] of Object.entries(inputChannelMentionsExpectedOutput)) {
+    expect(formatText(input)).toBe(expectedOutput);
+  }
+})
+
 test('formatText formats emojis properly', () => {
   const inputEmojisExpectedOutput = {
     ': smile:': ':smile:',

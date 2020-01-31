@@ -21,6 +21,18 @@ test('formatText formats user channel properly', () => {
   }
 })
 
+test('formatText formats special mentions properly', () => {
+  const inputSpecialMentionsExpectedOutput = {
+    '<! here> wear a mask': '<!here> wear a mask',
+    'Wear a mask <! Here>': 'Wear a mask <!here>',
+    '<! channel> wear a mask': '<!channel> wear a mask',
+    'Wear a mask <! Channel>': 'Wear a mask <!channel>'
+  }
+  for (const [input, expectedOutput] of Object.entries(inputSpecialMentionsExpectedOutput)) {
+    expect(formatText(input)).toBe(expectedOutput);
+  }
+})
+
 test('formatText formats emojis properly', () => {
   const inputEmojisExpectedOutput = {
     ': smile:': ':smile:',

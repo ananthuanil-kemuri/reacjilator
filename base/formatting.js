@@ -10,7 +10,11 @@ const formatTextForMentions = (text) => {
   // Links to public channels should look like "<#C024BE7LR>" or "<#C024BE7LR|some-channel>"
   const formatForChannelMentions = (text) => text.replace(/<\s*#\s*[A-Z0-9]*\s*\|\s*[a-zA-Z0-9-]*\s*>/g, stripWhitespace);
   // @here and @channel should look like <!here> and <!channel>, respectively
-  const formatForSpecialMentions = (text) => text.replace(/<\s*!\s*(here|channel)\s*>/, stripWhitespace);
+  const formatForSpecialMentions = (text) => 
+    text
+      .replace(/<\s*!\s*(here|channel)\s*>/gi, stripWhitespace)
+      .replace(/<!Here>/, '<!here>')
+      .replace(/<!Channel>/, '<!channel>');
   return formatForSpecialMentions(formatForChannelMentions(formatForUserMentions(text)));
 }
 

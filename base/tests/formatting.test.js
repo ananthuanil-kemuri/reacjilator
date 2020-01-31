@@ -65,3 +65,12 @@ test('formatText formats strikethroughs properly', () => {
   }
 })
 
+test('formatText formats strikethroughs properly', () => {
+  const inputsExpectedOutput = {
+    '& gt; nice': '&gt; nice',
+  }
+  for (const [input, expectedOutput] of Object.entries(inputsExpectedOutput)) {
+    expect(formatText(input)).toBe(expectedOutput);
+  }
+})
+

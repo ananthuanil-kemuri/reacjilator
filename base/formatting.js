@@ -2,7 +2,8 @@ const formatText = (text) => {
   let formattedText = formatTextForMentions(text);
   formattedText = formatTextForEmojis(formattedText);
   formattedText = formatTextForLinks(formattedText);
-  return formatTextForStrikethroughs(formattedText);
+  formattedText = formatTextForStrikethroughs(formattedText);
+  return formatTextForQuotes(formattedText);
 }
 
 const formatTextForMentions = (text) => {
@@ -29,6 +30,10 @@ const formatTextForLinks = (text) => {
 
 const formatTextForStrikethroughs = (text) => {
   return text.replace(/~ [a-zA-Z0-9 ]* ~/, (text) => '~' + text.slice(2, text.length - 2) + '~');
+}
+
+const formatTextForQuotes = (text) => {
+  return text.replace(/& gt;/g, '&gt;')
 }
 
 const stripWhitespace = (text) => text.replace(/\s/g, '');

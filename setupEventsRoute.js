@@ -35,7 +35,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
     }
   });
   const events = async(req, res) => {
-    const {bot_id, channel, hidden, subtype, text, thread_ts, ts, type} = req.body.event;
+    const {attachments, bot_id, channel, hidden, subtype, text, thread_ts, ts, type} = req.body.event;
       console.log(`req.body.event: ${JSON.stringify(req.body.event)}`);
       if (type !== 'message') return;
       // Exclude handling of messages for message updates etc and hidden messages
@@ -52,7 +52,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
       } else {
         parent_msg_ts = ts;
       }
-      if (await doesMessageNeedTranslating(text, targetLang)) {
+      if (await doesMessageNeedTranslating(text, attachments, targetLang)) {
         postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread);
       }
   };
@@ -70,8 +70,10 @@ const setupEventsRoute = (app, slackAPIURL) => {
     return result.data.messages;
   };
 
-  const doesMessageNeedTranslating = async(text, targetLang) => {
-    const detectedLangResp = await googTranslate.detect(text)
+  const doesMessageNeedTranslating = async(text, attachments, targetLang) => {
+    // Check if sharing msg from another channel
+    const textToCheck = text ? text : attachments[0].fallback;
+    const detectedLangResp = await googTranslate.detect(textToCheck)
       .catch(err => console.error(JSON.stringify(err)));
     console.log(`detectedLang: ${JSON.stringify(detectedLangResp)}`);
     const detectedLang = detectedLangResp[0].language;

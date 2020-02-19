@@ -36,7 +36,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
   });
   const events = async(req, res) => {
     const {attachments, bot_id, channel, hidden, subtype, text, thread_ts, ts, type} = req.body.event;
-      console.log(`req.body.event: ${JSON.stringify(req.body.event)}`);
+      console.log(`req.body.event: ${JSON.stringify(req.body.event, null, 2)}`);
       if (type !== 'message') return;
       // Exclude handling of messages for message updates etc and hidden messages
       if (bot_id || subtype || hidden) return;
@@ -53,7 +53,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
         parent_msg_ts = ts;
       }
       if (await doesMessageNeedTranslating(text, attachments, targetLang)) {
-        postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread);
+        postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread, attachments);
       }
   };
   
@@ -72,26 +72,38 @@ const setupEventsRoute = (app, slackAPIURL) => {
 
   const doesMessageNeedTranslating = async(text, attachments, targetLang) => {
     // Check if sharing msg from another channel
-    const textToCheck = text ? text : attachments[0].fallback;
+    const textToCheck = text ? text : attachments[0].text;
     const detectedLangResp = await googTranslate.detect(textToCheck)
-      .catch(err => console.error(JSON.stringify(err)));
-    console.log(`detectedLang: ${JSON.stringify(detectedLangResp)}`);
+      .catch(err => console.error(JSON.stringify(err, null, 2)));
+    console.log(`detectedLang: ${JSON.stringify(detectedLangResp, null, 2)}`);
     const detectedLang = detectedLangResp[0].language;
     return targetLang !== detectedLang;
   };
 
-  const postTranslatedMessage = async(origText, ts, targetLang, channel, is_in_thread) => {
+  const postTranslatedMessage = async(origText, ts, targetLang, channel, is_in_thread, origAttachments) => {
     try {
-      const { translation, sourceLanguage } = await translateText(origText, targetLang);
-      const footerText = `Translated from ${langCodeToName(sourceLanguage)} to ${langCodeToName(targetLang)}`;
-      const attachments = [{
-        text: origText,
-        footer: footerText,
-      }]
-      postMessage(translation, ts, channel, attachments, is_in_thread);
+      if (origText) {
+        const { translation, sourceLanguage } = await translateText(origText, targetLang);
+        const footerText = `Translated from ${langCodeToName(sourceLanguage)} to ${langCodeToName(targetLang)}`;
+        const attachments = [{
+          text: origText,
+          footer: footerText,
+        }]
+        postMessage(translation, ts, channel, attachments, is_in_thread);
+      } else {
+        // Handle shared msg from another channel
+        const sharedMsg = origAttachments[0].text;
+        const { translation, sourceLanguage } = await translateText(sharedMsg, targetLang);
+        const footerText = `Translated from ${langCodeToName(sourceLanguage)} to ${langCodeToName(targetLang)}`;
+        const attachments = [{
+          text: sharedMsg,
+          footer: footerText,
+        }]
+        postMessage(translation, ts, channel, attachments, is_in_thread);
+      }
     } catch (err) {
-      console.log('post translated msg error', channel)
-      console.log(err);
+      console.error('postTranslatedMessage error in channel: ', channel)
+      console.error(err);
     }
   };
 
@@ -120,7 +132,7 @@ const setupEventsRoute = (app, slackAPIURL) => {
   const translateText = async(text, targetLang) => {
     const translationResp = await googTranslate.translate(text, targetLang)
       .catch(err => console.error(err));
-    console.log(JSON.stringify(translationResp[1]));
+    console.log(JSON.stringify(translationResp[1], null, 2));
     return {
       translation: translationResp[0],
       sourceLanguage: translationResp[1].data.translations[0].detectedSourceLanguage

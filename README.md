@@ -37,6 +37,7 @@ TODO
 2. `npm run start-dev`
 3. `[path to ngrok]/ngrok http 5000`
 4. Get the forwarded https URL, append `/events`, and set it as the Request URL under `api.slack.com/apps` -> [App Name] -> Event Subscriptions. 
+5. Start the db: `docker run --name reacjilator-db --publish 6000:5432 --env POSTGRES_USER=admin --env POSTGRES_PASSWORD=admin --env POSTGRES_DB=reacjilator --detach postgres:10.6`
 
 
 ### Credentials

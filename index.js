@@ -23,16 +23,13 @@ const dotenv = require('dotenv');
 
 const db = require('./models')
 const setupBodyParser = require('./setupBodyParser');
-const setupEventsRoute = require('./setupEventsRoute');
-
-const slackAPIURL = 'https://slack.com/api';
 
 dotenv.config();
 
 const app = express();
 
 setupBodyParser(app);
-setupEventsRoute(app, slackAPIURL);
+require('./routes')(app)
 
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);

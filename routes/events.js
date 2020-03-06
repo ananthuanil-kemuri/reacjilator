@@ -2,9 +2,9 @@ const axios = require('axios');
 const qs = require('qs');
 const {Translate} = require('@google-cloud/translate').v2;
 
-const langCodeToName = require('./langCodeToName');
-const signature = require('./verifySignature');
-const { formatText } = require('./base/formatting');
+const langCodeToName = require('../langCodeToName');
+const signature = require('../verifySignature');
+const { formatText } = require('../base/formatting');
 
 const setupEventsRoute = (app, slackAPIURL) => {
   const googleCredentials = {

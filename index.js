@@ -21,8 +21,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 
-const db = require('./models')
-const setupBodyParser = require('./setupBodyParser');
+const setupBodyParser = require('./base/setupBodyParser');
 
 dotenv.config();
 

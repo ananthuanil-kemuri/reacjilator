@@ -3,7 +3,7 @@ const qs = require('qs');
 const {Translate} = require('@google-cloud/translate').v2;
 
 const langCodeToName = require('../langCodeToName');
-const signature = require('../verifySignature');
+const signature = require('./verifySignature');
 const { formatText } = require('../base/formatting');
 
 const eventsRoute = (app, slackAPIURL) => {

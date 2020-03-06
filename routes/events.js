@@ -2,6 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 const {Translate} = require('@google-cloud/translate').v2;
 
+const getChannelLanguage = require('../base/getChannelLanguage')
 const langCodeToName = require('../langCodeToName');
 const signature = require('./verifySignature');
 const { formatText } = require('../base/formatting');
@@ -42,7 +43,6 @@ const eventsRoute = (app, slackAPIURL) => {
       if (bot_id || subtype || hidden) return;
   
       // Matching ISO 639-1 language code
-      const targetLang = 'en';
       let parent_msg_ts, is_in_thread;
       if (thread_ts) {
         const messages = await getThreadMessages(channel, thread_ts);
@@ -52,6 +52,7 @@ const eventsRoute = (app, slackAPIURL) => {
       } else {
         parent_msg_ts = ts;
       }
+      const targetLang = await getChannelLanguage(channel)
       if (await doesMessageNeedTranslating(text, attachments, targetLang)) {
         postTranslatedMessage(text, parent_msg_ts, targetLang, channel, is_in_thread, attachments);
       }

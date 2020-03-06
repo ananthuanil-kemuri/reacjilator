@@ -1,23 +1,3 @@
-/* ***************************************************
- * Reacilator for Slack
- * Translate message when a user reacted with an emoji
- * Tomomi Imura (@girlie_mac)
- * ****************************************************/
-
- /* Slack App setup
-  * Enable events: "reaction_added"
-  * Enable Bot user
-  * Scopes: "chat:write:bot" (Send messages with chat.postMessage by a bot),
-  *         "reactions:read" (Access the workspace’s emoji reaction history)
-  *         "*:read" (Access channels info)
-  *         "*:history" (Access channels history)
-  */
-
- /* Google Cloud setup
-  * API Key https://cloud.google.com/translate/docs/getting-started
-  * Node Lib https://www.npmjs.com/package/@google-cloud/translate
-  */
-
 const express = require('express');
 const dotenv = require('dotenv');
 

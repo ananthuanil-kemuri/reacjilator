@@ -11,6 +11,9 @@ module.exports = {
       channel_id: {
         type: Sequelize.STRING
       },
+      language: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

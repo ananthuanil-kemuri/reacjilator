@@ -33,11 +33,25 @@ TODO
 
 ## Development
 
+Requirements:
+
+- node v10+
+- npm
+- sequelize CLI: `npm i -g sequelize-cli`
+
 1. Install (ngrok)[https://dashboard.ngrok.com/get-started] to expose a URL that forwards to the app running locally.
 2. `npm run start-dev`
 3. `[path to ngrok]/ngrok http 5000`
 4. Get the forwarded https URL, append `/events`, and set it as the Request URL under `api.slack.com/apps` -> [App Name] -> Event Subscriptions. 
 5. Start the db: `docker run --name reacjilator-db --publish 6000:5432 --env POSTGRES_USER=admin --env POSTGRES_PASSWORD=admin --env POSTGRES_DB=reacjilator --detach postgres:10.6`
+
+```sh
+# Generating db models
+sequelize model:create --name [Table Name] --attributes [column1]:[type], [column2]:[type] 
+
+# Upgrading dev database schema
+sequelize db:migrate
+```
 
 
 ### Credentials

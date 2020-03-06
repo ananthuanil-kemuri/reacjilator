@@ -1,8 +1,8 @@
-const SlackChannelLanguage = require('../models/slackchannellanguage').SlackChannelLanguage
+const models = require('../models')
 
 module.exports = {
   create(req, res) {
-    return SlackChannelLanguage
+    return models.SlackChannelLanguage
       .create({
         channel_id: req.body.channel_id,
         language: req.body.language

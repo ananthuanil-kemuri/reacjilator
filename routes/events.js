@@ -6,7 +6,7 @@ const langCodeToName = require('../langCodeToName');
 const signature = require('../verifySignature');
 const { formatText } = require('../base/formatting');
 
-const setupEventsRoute = (app, slackAPIURL) => {
+const eventsRoute = (app, slackAPIURL) => {
   const googleCredentials = {
     projectId: process.env.GOOGLE_PROJECT_ID,
     key: process.env.GOOGLE_KEY
@@ -140,4 +140,4 @@ const setupEventsRoute = (app, slackAPIURL) => {
   }
 }
 
-module.exports = setupEventsRoute
+module.exports = eventsRoute

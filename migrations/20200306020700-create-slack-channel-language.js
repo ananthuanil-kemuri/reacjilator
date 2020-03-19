@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('channel-language', {
+    return queryInterface.createTable('ChannelLanguage', {
       channel_id: {
         allowNull: false,
         primaryKey: true,
@@ -23,6 +23,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('channel-language');
+    return queryInterface.dropTable('ChannelLanguage');
   }
 };

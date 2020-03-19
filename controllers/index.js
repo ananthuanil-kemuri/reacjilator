@@ -1,5 +1,5 @@
-const slackChannelLanguage = require('./slackChannelLanguage')
+const channelLanguage = require('./channelLanguage')
 
 module.exports = {
-  slackChannelLanguage
+  channelLanguage
 }

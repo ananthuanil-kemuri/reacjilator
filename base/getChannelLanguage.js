@@ -3,12 +3,12 @@ const models = require('../models/')
 
 
 module.exports = async (channel_id) => {
-  const matchedSlackChannelLanguage = await models.SlackChannelLanguage.findOne({
+  const matchedChannelLanguage = await models.ChannelLanguage.findOne({
     where: {
       channel_id
     },
     attributes: ['channel_id', 'language']
   })
-  if (!matchedSlackChannelLanguage) return config.defaultLanguage
-  return matchedSlackChannelLanguage.language
+  if (!matchedChannelLanguage) return config.defaultLanguage
+  return matchedChannelLanguage.language
 }

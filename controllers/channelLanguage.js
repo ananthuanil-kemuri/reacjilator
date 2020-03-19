@@ -2,12 +2,13 @@ const models = require('../models')
 
 module.exports = {
   create(req, res) {
-    return models.SlackChannelLanguage
+    console.log(req)
+    return models.ChannelLanguage
       .create({
         channel_id: req.body.channel_id,
-        language: req.body.language
+        language: req.body.text
       })
-      .then(slackChannelLanguage => res.status(201).send(slackChannelLanguage))
+      .then(ChannelLanguage => res.status(201).send(ChannelLanguage))
       .catch(error => res.status(400).send(error))
   }
 }

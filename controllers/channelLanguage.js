@@ -5,11 +5,6 @@ const allowedSlackLanguageChoicesToLangCode = {
   'chinese': 'zh-CN'
 }
 
-class InvalidSlackLanguage extends Error {
-  constructor(message) {
-    super(message)
-  }
-}
 
 module.exports = {
   create(req, res) {
@@ -22,10 +17,11 @@ module.exports = {
       .then(([channelLanguage, created]) => {
         const slackLangChoice = req.body.text
         if (!Object.keys(allowedSlackLanguageChoicesToLangCode).includes(slackLangChoice)) {
-          throw new InvalidSlackLanguage(`${slackLangChoice} is not a valid language choice!`)
+          // Returning 500 displays in Slack as "/language failed with the error "http_service_error"
+          return res.status(201).send(`${slackLangChoice} is not a valid language choice!`)
         }
         channelLanguage.update({language: allowedSlackLanguageChoicesToLangCode[slackLangChoice] })
-          .then(() => res.status(201).send(channelLanguage))
+          .then(() => res.status(201).send(`Set channel language to ${slackLangChoice}!`))
       })
       .catch(error => {
         console.error(error)

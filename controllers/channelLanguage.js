@@ -2,7 +2,6 @@ const models = require('../models')
 
 module.exports = {
   create(req, res) {
-    console.log(req)
     return models.ChannelLanguage
       .create({
         channel_id: req.body.channel_id,

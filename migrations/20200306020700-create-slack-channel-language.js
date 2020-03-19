@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('SlackChannelLanguages', {
+    return queryInterface.createTable('channel-language', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,22 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       channel_id: {
-        type: Sequelize.STRING
+        primaryKey: true,
+        type: Sequelize.STRING,
       },
       language: {
         type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
+        defaultValue: new Date(),
         type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
+        defaultValue: new Date(),
         type: Sequelize.DATE
       }
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('SlackChannelLanguages');
+    return queryInterface.dropTable('channel-language');
   }
 };

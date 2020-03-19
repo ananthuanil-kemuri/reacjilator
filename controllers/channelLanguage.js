@@ -1,9 +1,9 @@
 const models = require('../models')
 
-const allowedSlackLanguageChoices = [
-  'english',
-  'chinese'
-]
+const allowedSlackLanguageChoicesToLangCode = {
+  'english': 'en',
+  'chinese': 'zh-CN'
+}
 
 class InvalidSlackLanguage extends Error {
   constructor(message) {
@@ -20,11 +20,11 @@ module.exports = {
         }
       })
       .then(([channelLanguage, created]) => {
-        const newLanguage = req.body.text
-        if (!allowedSlackLanguageChoices.includes(newLanguage)) {
-          throw new InvalidSlackLanguage(`${newLanguage} is not a valid language choice!`)
+        const slackLangChoice = req.body.text
+        if (!Object.keys(allowedSlackLanguageChoicesToLangCode).includes(slackLangChoice)) {
+          throw new InvalidSlackLanguage(`${slackLangChoice} is not a valid language choice!`)
         }
-        channelLanguage.update({language: req.body.text })
+        channelLanguage.update({language: allowedSlackLanguageChoicesToLangCode[slackLangChoice] })
           .then(() => res.status(201).send(channelLanguage))
       })
       .catch(error => {

@@ -14,7 +14,7 @@ const googleCredentials = {
 };
 const googTranslate = new Translate({ ...googleCredentials });
 
-const eventsRoute = (app) => {
+export default function eventsRoute (app) {
   app.post('/events', (req, res) => {
     switch (req.body.type) {
       case 'url_verification': {
@@ -111,7 +111,7 @@ const postTranslatedMessage = async(origText, ts, targetLang, channel, is_in_thr
   }
 };
 
-const postMessage = async(text, ts, channel, attachments, is_in_thread) => {
+export const postMessage = async(text, ts, channel, attachments, is_in_thread) => {
   const args = {
     attachments: JSON.stringify(attachments),
     channel,
@@ -148,4 +148,3 @@ function compareDetectedTargetLang (detectedLang, targetLang) {
   return targetLang !== detectedLang;
 }
 
-module.exports = eventsRoute

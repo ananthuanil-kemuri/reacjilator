@@ -1,4 +1,4 @@
-const events = require('./events')
+import events from './events'
 const channelLanguage = require('./channelLanguage')
 
 module.exports = (app) => {

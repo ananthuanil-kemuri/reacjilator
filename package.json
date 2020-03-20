@@ -6,8 +6,8 @@
   "scripts": {
     "build": "npm run clean && npm run transpile",
     "clean": "rimraf dist",
-    "start": "nf start",
-    "start-dev": "npm run build && nodemon dist/index.js",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "prod": "npm run build && NODE_ENV=production node dist/index.js",
     "test": "yarn jest",
     "testw": "yarn jest --watch",
     "transpile": "babel src --out-dir dist"
@@ -38,12 +38,22 @@
     "tsscmp": "^1.0.6"
   },
   "devDependencies": {
+    "@babel/node": "^7.8.7",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2"
   },
   "babel": {
     "presets": [
       "@babel/preset-env"
+    ]
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src/**"
+    ],
+    "ignore": [
+      "**/tests/**",
+      "dist"
     ]
   }
 }

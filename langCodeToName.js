@@ -1,5 +1,6 @@
 const langCodeLookup = {
   'zh-CN': 'Mandarin',
+  'zh-TW': 'Mandarin (Traditional)',
   'en': 'English'
 };
 

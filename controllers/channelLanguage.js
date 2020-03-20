@@ -8,6 +8,7 @@ const allowedSlackLanguageChoicesToLangCode = {
 
 module.exports = {
   create(req, res) {
+    const slackLangChoice = req.body.text
     return models.ChannelLanguage
       .findOrCreate({
         where: {
@@ -15,7 +16,6 @@ module.exports = {
         }
       })
       .then(([channelLanguage, created]) => {
-        const slackLangChoice = req.body.text
         if (!Object.keys(allowedSlackLanguageChoicesToLangCode).includes(slackLangChoice)) {
           // Returning 500 displays in Slack as "/language failed with the error "http_service_error"
           return res.status(201).send(`${slackLangChoice} is not a valid language choice!`)

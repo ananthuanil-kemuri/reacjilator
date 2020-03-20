@@ -3,10 +3,10 @@ const qs = require('qs');
 const {Translate} = require('@google-cloud/translate').v2;
 
 const getChannelLanguage = require('../base/getChannelLanguage')
-const langCodeToName = require('../../langCodeToName');
+const langCodeToName = require('../langCodeToName');
 const signature = require('./verifySignature');
 const { formatText } = require('../base/formatting');
-const { slackAPIURL } = require('../../config')
+const { slackAPIURL } = require('../config')
 
 const googleCredentials = {
   projectId: process.env.GOOGLE_PROJECT_ID,

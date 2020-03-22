@@ -255,5 +255,5 @@ module.exports = {
   yt: 'fr',
   za: 'af',
   zm: 'en',
-  zw: 'en',
-};
+  zw: 'en'
+}

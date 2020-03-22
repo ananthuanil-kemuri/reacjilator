@@ -1,11 +1,11 @@
 const langCodeLookup = {
   'zh-CN': 'Mandarin',
   'zh-TW': 'Mandarin (Traditional)',
-  'en': 'English'
-};
+  en: 'English'
+}
 
-const langCodeToName = (langCode) => {
+const langCodeToName = langCode => {
   return langCodeLookup[langCode] || langCode
-};
+}
 
 module.exports = langCodeToName

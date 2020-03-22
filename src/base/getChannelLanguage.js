@@ -1,8 +1,7 @@
 const config = require('./../config')
 const models = require('../models/')
 
-
-module.exports = async (channel_id) => {
+module.exports = async channel_id => {
   const matchedChannelLanguage = await models.ChannelLanguage.findOne({
     where: {
       channel_id

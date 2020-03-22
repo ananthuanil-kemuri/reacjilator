@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('ChannelLanguage', {
       channel_id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       language: {
         type: Sequelize.STRING
@@ -20,9 +20,9 @@ module.exports = {
         defaultValue: new Date(),
         type: Sequelize.DATE
       }
-    });
+    })
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('ChannelLanguage');
+    return queryInterface.dropTable('ChannelLanguage')
   }
-};
+}

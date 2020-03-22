@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/node": "^7.8.7",
+    "husky": "^4.2.3",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "prettier": "1.19.1"
@@ -61,6 +62,12 @@
   "engines": {
     "node": "10.16.3",
     "yarn": "1.21.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "",
+      "pre-push": "npm run prettier && npm test"
+    }
   },
   "prettier": {
     "semi": false,

@@ -7,6 +7,7 @@
     "build": "npm run clean && npm run transpile",
     "clean": "rimraf dist",
     "dev": "nodemon --exec babel-node src/index.js",
+    "prettier": "npx prettier --config package.json --write 'src/**/*.js'",
     "prod": "npm run build && NODE_ENV=production node dist/index.js",
     "test": "yarn jest",
     "testw": "yarn jest --watch",
@@ -62,7 +63,6 @@
     "yarn": "1.21.1"
   },
   "prettier": {
-    "trailingComma": "all",
     "semi": false,
     "singleQuote": true
   }

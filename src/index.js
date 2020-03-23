@@ -2,13 +2,20 @@ const express = require('express')
 const dotenv = require('dotenv')
 
 const setupBodyParser = require('./base/setupBodyParser')
+import services from './services'
 
 dotenv.config()
+
+const googleCloudService = new services.GoogleCloudService()
+
+const serviceInstances = {
+  googleCloudService
+}
 
 const app = express()
 
 setupBodyParser(app)
-require('./routes')(app)
+require('./routes')(app, serviceInstances)
 
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log(

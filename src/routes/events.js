@@ -1,6 +1,5 @@
 const axios = require('axios')
 const qs = require('qs')
-const { Translate } = require('@google-cloud/translate').v2
 
 const getChannelLanguage = require('../base/getChannelLanguage')
 const langCodeToName = require('../langCodeToName')
@@ -8,13 +7,7 @@ const signature = require('./verifySignature')
 const { formatText } = require('../base/formatting')
 const { slackAPIURL } = require('../config')
 
-const googleCredentials = {
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  key: process.env.GOOGLE_KEY
-}
-const googTranslate = new Translate({ ...googleCredentials })
-
-export default function eventsRoute(app) {
+export default function eventsRoute(app, services) {
   app.post('/events', (req, res) => {
     switch (req.body.type) {
       case 'url_verification': {
@@ -29,7 +22,7 @@ export default function eventsRoute(app) {
           return
         } else {
           res.sendStatus(200)
-          return events(req, res)
+          return events(req, res, services)
         }
         break
       }
@@ -40,7 +33,7 @@ export default function eventsRoute(app) {
   })
 }
 
-const events = async (req, res) => {
+const events = async (req, res, services) => {
   const {
     attachments,
     bot_id,
@@ -68,7 +61,7 @@ const events = async (req, res) => {
     parent_msg_ts = ts
   }
   const targetLang = await getChannelLanguage(channel)
-  if (await doesMessageNeedTranslating(text, attachments, targetLang)) {
+  if (await doesMessageNeedTranslating(text, attachments, targetLang, services)) {
     postTranslatedMessage(
       text,
       parent_msg_ts,
@@ -96,14 +89,10 @@ const getThreadMessages = async (channel, ts) => {
   return result.data.messages
 }
 
-const doesMessageNeedTranslating = async (text, attachments, targetLang) => {
+const doesMessageNeedTranslating = async (text, attachments, targetLang, services) => {
   // Check if sharing msg from another channel
   const textToCheck = text ? text : attachments[0].text
-  const detectedLangResp = await googTranslate
-    .detect(textToCheck)
-    .catch(err => console.error(JSON.stringify(err, null, 2)))
-  console.log(`detectedLang: ${JSON.stringify(detectedLangResp, null, 2)}`)
-  const detectedLang = detectedLangResp[0].language
+  const detectedLang = await services.googleCloudService.detectLanguage(textToCheck)
   return compareDetectedTargetLang(detectedLang, targetLang)
 }
 

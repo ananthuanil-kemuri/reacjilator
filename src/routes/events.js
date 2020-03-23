@@ -61,7 +61,9 @@ const events = async (req, res, services) => {
     parent_msg_ts = ts
   }
   const targetLang = await getChannelLanguage(channel)
-  if (await doesMessageNeedTranslating(text, attachments, targetLang, services)) {
+  if (
+    await doesMessageNeedTranslating(text, attachments, targetLang, services)
+  ) {
     postTranslatedMessage(
       text,
       parent_msg_ts,
@@ -90,10 +92,17 @@ const getThreadMessages = async (channel, ts) => {
   return result.data.messages
 }
 
-const doesMessageNeedTranslating = async (text, attachments, targetLang, services) => {
+const doesMessageNeedTranslating = async (
+  text,
+  attachments,
+  targetLang,
+  services
+) => {
   // Check if sharing msg from another channel
   const textToCheck = text ? text : attachments[0].text
-  const detectedLang = await services.googleCloudService.detectLanguage(textToCheck)
+  const detectedLang = await services.googleCloudService.detectLanguage(
+    textToCheck
+  )
   return compareDetectedTargetLang(detectedLang, targetLang)
 }
 
@@ -108,10 +117,10 @@ const postTranslatedMessage = async (
 ) => {
   try {
     if (origText) {
-      const { translation, sourceLanguage } = await services.googleCloudService.translate(
-        origText,
-        targetLang
-      )
+      const {
+        translation,
+        sourceLanguage
+      } = await services.googleCloudService.translate(origText, targetLang)
       const footerText = `Translated from ${langCodeToName(
         sourceLanguage
       )} to ${langCodeToName(targetLang)}`
@@ -125,10 +134,10 @@ const postTranslatedMessage = async (
     } else {
       // Handle shared msg from another channel
       const sharedMsg = origAttachments[0].text
-      const { translation, sourceLanguage } = await services.googleCloudService.translate(
-        sharedMsg,
-        targetLang
-      )
+      const {
+        translation,
+        sourceLanguage
+      } = await services.googleCloudService.translate(sharedMsg, targetLang)
       const footerText = `Translated from ${langCodeToName(
         sourceLanguage
       )} to ${langCodeToName(targetLang)}`

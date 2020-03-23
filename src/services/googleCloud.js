@@ -16,4 +16,15 @@ export class GoogleCloudService {
     console.log(`detectedLang: ${JSON.stringify(detectedLangResp, null, 2)}`)
     return detectedLangResp[0].language
   }
+  async translate(text, targetLanguage) {
+    const translationResp = await this.googleTranslateClient
+      .translate(text, targetLanguage)
+      .catch(err => console.error(err))
+    console.log(JSON.stringify(translationResp[1], null, 2))
+    return {
+      translation: translationResp[0],
+      sourceLanguage:
+        translationResp[1].data.translations[0].detectedSourceLanguage
+    }
+  }
 }

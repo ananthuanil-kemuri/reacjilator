@@ -68,7 +68,8 @@ const events = async (req, res, services) => {
       targetLang,
       channel,
       is_in_thread,
-      attachments
+      attachments,
+      services
     )
   }
 }
@@ -102,11 +103,12 @@ const postTranslatedMessage = async (
   targetLang,
   channel,
   is_in_thread,
-  origAttachments
+  origAttachments,
+  services
 ) => {
   try {
     if (origText) {
-      const { translation, sourceLanguage } = await translateText(
+      const { translation, sourceLanguage } = await services.googleCloudService.translate(
         origText,
         targetLang
       )
@@ -123,7 +125,7 @@ const postTranslatedMessage = async (
     } else {
       // Handle shared msg from another channel
       const sharedMsg = origAttachments[0].text
-      const { translation, sourceLanguage } = await translateText(
+      const { translation, sourceLanguage } = await services.googleCloudService.translate(
         sharedMsg,
         targetLang
       )
@@ -172,18 +174,6 @@ export const postMessage = async (
     console.log('postMessage result.data', result.data)
   } catch (e) {
     console.log(e)
-  }
-}
-
-const translateText = async (text, targetLang) => {
-  const translationResp = await googTranslate
-    .translate(text, targetLang)
-    .catch(err => console.error(err))
-  console.log(JSON.stringify(translationResp[1], null, 2))
-  return {
-    translation: translationResp[0],
-    sourceLanguage:
-      translationResp[1].data.translations[0].detectedSourceLanguage
   }
 }
 

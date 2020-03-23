@@ -11,6 +11,7 @@
     "prod": "npm run build && NODE_ENV=production node dist/index.js",
     "test": "yarn jest",
     "testw": "yarn jest --watch",
+    "test-only-changed": "yarn jest --onlyChanged",
     "transpile": "babel src --out-dir dist"
   },
   "keywords": [
@@ -65,7 +66,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "",
+      "pre-commit": "yarn run test-only-changed",
       "pre-push": "npm run prettier && npm test"
     }
   },

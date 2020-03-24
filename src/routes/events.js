@@ -3,7 +3,7 @@ const langCodeToName = require('../langCodeToName')
 const signature = require('./verifySignature')
 
 export default function eventsRoute(app, services) {
-  app.post('/events', (req, res) => {
+  app.post('/events', async (req, res) => {
     switch (req.body.type) {
       case 'url_verification': {
         // verify Events API endpoint by returning challenge if present
@@ -16,8 +16,29 @@ export default function eventsRoute(app, services) {
           res.sendStatus(404)
           return
         } else {
-          res.sendStatus(200)
-          return events(req, res, services)
+          try {
+            // API will send repeat events if we don't send back a 200 quickly enough.
+            res.sendStatus(200)
+            await events(req, res, services)
+          } catch (err) {
+            const { channel, thread_ts, ts } = req.body.event
+            const {
+              parent_msg_ts,
+              is_in_thread
+            } = await getParentMsgTsAndIsInthread(
+              thread_ts,
+              ts,
+              channel,
+              services
+            )
+            services.slackService.postMessage(
+              `There was an error translating your message: ${err.message}.`,
+              parent_msg_ts,
+              channel,
+              [],
+              is_in_thread
+            )
+          }
         }
         break
       }
@@ -44,7 +65,12 @@ const events = async (req, res, services) => {
   if (type !== 'message') return
   // Exclude handling of messages for bot msgs including translation, message updates and hidden messages
   if (bot_id || subtype || hidden) return
-  const { parent_msg_ts, is_in_thread } = await getParentMsgTsAndIsInthread(thread_ts, ts, channel, services)
+  const { parent_msg_ts, is_in_thread } = await getParentMsgTsAndIsInthread(
+    thread_ts,
+    ts,
+    channel,
+    services
+  )
   const targetLang = await getChannelLanguage(channel)
   if (
     await doesMessageNeedTranslating(text, attachments, targetLang, services)
@@ -61,14 +87,16 @@ const events = async (req, res, services) => {
   }
 }
 
-const getParentMsgTsAndIsInthread = async (thread_ts, ts, channel, services) => {
+const getParentMsgTsAndIsInthread = async (
+  thread_ts,
+  ts,
+  channel,
+  services
+) => {
   let parent_msg_ts, is_in_thread
   if (thread_ts) {
     let messages
-    messages = await services.slackService.getThreadMessages(
-      channel,
-      thread_ts
-    )
+    messages = await services.slackService.getThreadMessages(channel, thread_ts)
     const parentMsg = messages.find(msg => msg.ts === thread_ts)
     parent_msg_ts = parentMsg.ts
     is_in_thread = true

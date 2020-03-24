@@ -1,11 +1,6 @@
-const axios = require('axios')
-const qs = require('qs')
-
 const getChannelLanguage = require('../base/getChannelLanguage')
 const langCodeToName = require('../langCodeToName')
 const signature = require('./verifySignature')
-const { formatText } = require('../base/formatting')
-const { slackAPIURL } = require('../config')
 
 export default function eventsRoute(app, services) {
   app.post('/events', (req, res) => {
@@ -53,7 +48,13 @@ const events = async (req, res, services) => {
   // Matching ISO 639-1 language code
   let parent_msg_ts, is_in_thread
   if (thread_ts) {
-    const messages = await getThreadMessages(channel, thread_ts)
+    let messages
+    try {
+      messages = await services.slackService.getThreadMessages(channel, thread_ts)
+    } catch (err) {
+      console.error(err)
+      return res.status(500)
+    }
     const parentMsg = messages.find(msg => msg.ts === thread_ts)
     parent_msg_ts = parentMsg.ts
     is_in_thread = true
@@ -64,7 +65,7 @@ const events = async (req, res, services) => {
   if (
     await doesMessageNeedTranslating(text, attachments, targetLang, services)
   ) {
-    postTranslatedMessage(
+    await postTranslatedMessage(
       text,
       parent_msg_ts,
       targetLang,
@@ -76,21 +77,6 @@ const events = async (req, res, services) => {
   }
 }
 
-const getThreadMessages = async (channel, ts) => {
-  const args = {
-    token: process.env.SLACK_BOT_USER_ACCESS_TOKEN,
-    channel,
-    ts: ts,
-    limit: 1,
-    inclusive: true
-  }
-  const result = await axios.post(
-    `${slackAPIURL}/conversations.replies`,
-    qs.stringify(args)
-  )
-  if (!result.data.ok) throw JSON.stringify(result.data)
-  return result.data.messages
-}
 
 const doesMessageNeedTranslating = async (
   text,
@@ -130,7 +116,7 @@ const postTranslatedMessage = async (
           footer: footerText
         }
       ]
-      postMessage(translation, ts, channel, attachments, is_in_thread)
+      return await services.slackService.postMessage(translation, ts, channel, attachments, is_in_thread)
     } else {
       // Handle shared msg from another channel
       const sharedMsg = origAttachments[0].text
@@ -147,42 +133,11 @@ const postTranslatedMessage = async (
           footer: footerText
         }
       ]
-      postMessage(translation, ts, channel, attachments, is_in_thread)
+      return await services.slackService.postMessage(translation, ts, channel, attachments, is_in_thread)
     }
   } catch (err) {
     console.error('postTranslatedMessage error in channel: ', channel)
     console.error(err)
-  }
-}
-
-export const postMessage = async (
-  text,
-  ts,
-  channel,
-  attachments,
-  is_in_thread
-) => {
-  const args = {
-    attachments: JSON.stringify(attachments),
-    channel,
-    link_names: true,
-    text: formatText(text),
-    token: process.env.SLACK_BOT_USER_ACCESS_TOKEN
-  }
-  if (is_in_thread) {
-    args.thread_ts = ts
-  } else {
-    args.ts = ts
-  }
-  const result = await axios.post(
-    `${slackAPIURL}/chat.postMessage`,
-    qs.stringify(args)
-  )
-  console.log('channel', channel)
-  try {
-    console.log('postMessage result.data', result.data)
-  } catch (e) {
-    console.log(e)
   }
 }
 

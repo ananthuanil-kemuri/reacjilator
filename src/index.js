@@ -7,9 +7,11 @@ import services from './services'
 dotenv.config()
 
 const googleCloudService = new services.GoogleCloudService()
+const slackService = new services.SlackService()
 
 const serviceInstances = {
-  googleCloudService
+  googleCloudService,
+  slackService
 }
 
 const app = express()

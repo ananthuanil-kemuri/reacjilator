@@ -13,7 +13,7 @@ function create(req, res) {
       channel_id: req.body.channel_id
     }
   })
-    .then(async ([channelLanguage, created]) => {
+    .then(async ([channelLanguage]) => {
       if (
         !Object.keys(allowedSlackLanguageChoicesToLangCode).includes(
           slackLangChoice

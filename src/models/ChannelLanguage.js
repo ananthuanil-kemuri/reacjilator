@@ -12,8 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   )
-  ChannelLanguage.associate = function(models) {
-    // associations can be defined here
+  ChannelLanguage.associate = function() {
   }
   return ChannelLanguage
 }

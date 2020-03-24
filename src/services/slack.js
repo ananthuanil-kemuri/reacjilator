@@ -49,7 +49,9 @@ export class SlackService {
       )
       console.log(`Sent message: ${result.data.message.text}`)
     } catch (err) {
-      throw new Error(`Failed to send message: ${result.data.message.text}, error: ${err.message}`)
+      throw new Error(
+        `Failed to send message: ${result.data.message.text}, error: ${err.message}`
+      )
     }
     return result
   }

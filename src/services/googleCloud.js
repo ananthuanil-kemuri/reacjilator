@@ -13,7 +13,9 @@ export class GoogleCloudService {
     const detectedLangResp = await this.googleTranslateClient
       .detect(text)
       .catch(err => console.error(JSON.stringify(err, null, 2)))
-    console.log(`detectedLang: ${detectedLangResp[0].language}, confidence: ${detectedLangResp[0].confidence}`)
+    console.log(
+      `detectedLang: ${detectedLangResp[0].language}, confidence: ${detectedLangResp[0].confidence}`
+    )
     return detectedLangResp[0].language
   }
   async translate(text, targetLanguage) {

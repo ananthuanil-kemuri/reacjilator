@@ -14,7 +14,9 @@ export default async channel_id => {
     throw new Error(`Failed to query ChannelLanguage: ${err.message}`)
   }
   if (!matchedChannelLanguage) {
-    console.error(`Couldnt find matching language, defaulting to ${config.defaultLanguage}`)
+    console.error(
+      `Couldnt find matching language, defaulting to ${config.defaultLanguage}`
+    )
     return config.defaultLanguage
   }
   return matchedChannelLanguage.language

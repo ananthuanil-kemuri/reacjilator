@@ -72,7 +72,12 @@ const events = async (req, res, services) => {
     services
   )
   const targetLang = await getChannelLanguage(channel)
-  const msgNeedsTranslating = await doesMessageNeedTranslating(text, attachments, targetLang, services)
+  const msgNeedsTranslating = await doesMessageNeedTranslating(
+    text,
+    attachments,
+    targetLang,
+    services
+  )
   if (msgNeedsTranslating) {
     await postTranslatedMessage(
       text,

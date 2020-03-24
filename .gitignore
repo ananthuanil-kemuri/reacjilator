@@ -21,3 +21,5 @@ dist
 
 ### IDE Settings (VSCode)
 .vscode
+
+.eslintcache

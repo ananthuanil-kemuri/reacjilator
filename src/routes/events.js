@@ -50,7 +50,10 @@ const events = async (req, res, services) => {
   if (thread_ts) {
     let messages
     try {
-      messages = await services.slackService.getThreadMessages(channel, thread_ts)
+      messages = await services.slackService.getThreadMessages(
+        channel,
+        thread_ts
+      )
     } catch (err) {
       console.error(err)
       return res.status(500)
@@ -76,7 +79,6 @@ const events = async (req, res, services) => {
     )
   }
 }
-
 
 const doesMessageNeedTranslating = async (
   text,
@@ -116,7 +118,13 @@ const postTranslatedMessage = async (
           footer: footerText
         }
       ]
-      return await services.slackService.postMessage(translation, ts, channel, attachments, is_in_thread)
+      return await services.slackService.postMessage(
+        translation,
+        ts,
+        channel,
+        attachments,
+        is_in_thread
+      )
     } else {
       // Handle shared msg from another channel
       const sharedMsg = origAttachments[0].text
@@ -133,7 +141,13 @@ const postTranslatedMessage = async (
           footer: footerText
         }
       ]
-      return await services.slackService.postMessage(translation, ts, channel, attachments, is_in_thread)
+      return await services.slackService.postMessage(
+        translation,
+        ts,
+        channel,
+        attachments,
+        is_in_thread
+      )
     }
   } catch (err) {
     console.error('postTranslatedMessage error in channel: ', channel)

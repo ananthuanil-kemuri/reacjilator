@@ -24,13 +24,7 @@ export class SlackService {
     if (!result.data.ok) throw JSON.stringify(result.data)
     return result.data.messages
   }
-  async postMessage (
-    text,
-    ts,
-    channel,
-    attachments,
-    is_in_thread
-  ) {
+  async postMessage(text, ts, channel, attachments, is_in_thread) {
     const args = {
       attachments: JSON.stringify(attachments),
       channel,

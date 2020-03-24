@@ -23,8 +23,7 @@ export class SlackService {
         qs.stringify(args)
       )
     } catch (err) {
-      console.error(err)
-      throw new Error(err)
+      throw new Error(`Failed to query thread messages: ${err.message}`)
     }
     if (!result.data.ok) throw JSON.stringify(result.data)
     return result.data.messages
@@ -42,15 +41,15 @@ export class SlackService {
     } else {
       args.ts = ts
     }
-    const result = await axios.post(
-      `${this.apiURL}/chat.postMessage`,
-      qs.stringify(args)
-    )
-    console.log('channel', channel)
+    let result
     try {
-      console.log('postMessage result.data', result.data)
-    } catch (e) {
-      console.log(e)
+      result = await axios.post(
+        `${this.apiURL}/chat.postMessage`,
+        qs.stringify(args)
+      )
+      console.log(`Sent message: ${result.data.message.text}`)
+    } catch (err) {
+      throw new Error(`Failed to send message: ${result.data.message.text}, error: ${err.message}`)
     }
     return result
   }

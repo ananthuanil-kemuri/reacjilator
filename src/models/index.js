@@ -25,7 +25,6 @@ if (config.use_env_variable) {
 async function authDB() {
   try {
     await sequelize.authenticate()
-    console.log('db connection authed successfully!')
   } catch (error) {
     console.error(error)
   }

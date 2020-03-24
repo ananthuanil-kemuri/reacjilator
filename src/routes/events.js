@@ -61,7 +61,7 @@ const events = async (req, res, services) => {
     ts,
     type
   } = req.body.event
-  console.log(`req.body.event: ${JSON.stringify(req.body.event, null, 2)}`)
+  // console.log(`req.body.event: ${JSON.stringify(req.body.event, null, 2)}`)
   if (type !== 'message') return
   // Exclude handling of messages for bot msgs including translation, message updates and hidden messages
   if (bot_id || subtype || hidden) return
@@ -72,9 +72,8 @@ const events = async (req, res, services) => {
     services
   )
   const targetLang = await getChannelLanguage(channel)
-  if (
-    await doesMessageNeedTranslating(text, attachments, targetLang, services)
-  ) {
+  const msgNeedsTranslating = await doesMessageNeedTranslating(text, attachments, targetLang, services)
+  if (msgNeedsTranslating) {
     await postTranslatedMessage(
       text,
       parent_msg_ts,
@@ -84,6 +83,8 @@ const events = async (req, res, services) => {
       attachments,
       services
     )
+  } else {
+    console.log(`Message does not need translating: ${text}`)
   }
 }
 

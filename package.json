@@ -48,6 +48,7 @@
     "eslint-plugin-jest": "^23.8.2",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
+    "lint-staged": "^10.0.9",
     "nodemon": "^2.0.2",
     "prettier": "1.19.1"
   },
@@ -74,9 +75,12 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint && yarn run test-only-changed",
+      "pre-commit": "lint-staged && yarn run test-only-changed",
       "pre-push": "npm run prettier && npm test"
     }
+  },
+  "lint-staged": {
+    "*.js": ["./node_modules/.bin/eslint — fix", "git add"]
   },
   "prettier": {
     "semi": false,

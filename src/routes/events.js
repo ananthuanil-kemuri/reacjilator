@@ -42,28 +42,9 @@ const events = async (req, res, services) => {
   } = req.body.event
   console.log(`req.body.event: ${JSON.stringify(req.body.event, null, 2)}`)
   if (type !== 'message') return
-  // Exclude handling of messages for message updates etc and hidden messages
+  // Exclude handling of messages for bot msgs including translation, message updates and hidden messages
   if (bot_id || subtype || hidden) return
-
-  // Matching ISO 639-1 language code
-  let parent_msg_ts, is_in_thread
-  if (thread_ts) {
-    let messages
-    try {
-      messages = await services.slackService.getThreadMessages(
-        channel,
-        thread_ts
-      )
-    } catch (err) {
-      console.error(err)
-      return res.status(500)
-    }
-    const parentMsg = messages.find(msg => msg.ts === thread_ts)
-    parent_msg_ts = parentMsg.ts
-    is_in_thread = true
-  } else {
-    parent_msg_ts = ts
-  }
+  const { parent_msg_ts, is_in_thread } = await getParentMsgTsAndIsInthread(thread_ts, ts, channel, services)
   const targetLang = await getChannelLanguage(channel)
   if (
     await doesMessageNeedTranslating(text, attachments, targetLang, services)
@@ -77,6 +58,26 @@ const events = async (req, res, services) => {
       attachments,
       services
     )
+  }
+}
+
+const getParentMsgTsAndIsInthread = async (thread_ts, ts, channel, services) => {
+  let parent_msg_ts, is_in_thread
+  if (thread_ts) {
+    let messages
+    messages = await services.slackService.getThreadMessages(
+      channel,
+      thread_ts
+    )
+    const parentMsg = messages.find(msg => msg.ts === thread_ts)
+    parent_msg_ts = parentMsg.ts
+    is_in_thread = true
+  } else {
+    parent_msg_ts = ts
+  }
+  return {
+    parent_msg_ts,
+    is_in_thread
   }
 }
 

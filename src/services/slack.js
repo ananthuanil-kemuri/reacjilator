@@ -3,7 +3,7 @@ const qs = require('qs')
 
 const { formatText } = require('../base/formatting')
 
-const { slackAPIURL } = require('../config')
+import { slackAPIURL } from '../config'
 
 export class SlackService {
   apiURL = slackAPIURL

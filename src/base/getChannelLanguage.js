@@ -1,4 +1,4 @@
-const config = require('./../config')
+import config from './../config'
 const models = require('../models/')
 
 module.exports = async channel_id => {

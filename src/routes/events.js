@@ -1,4 +1,4 @@
-const getChannelLanguage = require('../base/getChannelLanguage')
+import getChannelLanguage from '../base/getChannelLanguage'
 const langCodeToName = require('../langCodeToName')
 const signature = require('./verifySignature')
 

@@ -1,5 +1,5 @@
 import events from './events'
-const channelLanguage = require('./channelLanguage')
+import channelLanguage from './channelLanguage'
 
 module.exports = (app, services) => {
   app.get('/api', (req, res) =>

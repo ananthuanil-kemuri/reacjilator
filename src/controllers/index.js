@@ -1,5 +1,3 @@
-const channelLanguage = require('./channelLanguage')
+import channelLanguage from './channelLanguage'
 
-module.exports = {
-  channelLanguage
-}
+export { channelLanguage }

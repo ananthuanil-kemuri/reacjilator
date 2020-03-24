@@ -1,5 +1,5 @@
-const channelLanguageController = require('../controllers').channelLanguage
+import { channelLanguage as channelLanguageController } from '../controllers'
 
-module.exports = app => {
+export default function (app) {
   app.post('/api/channelLanguage', channelLanguageController.create)
 }

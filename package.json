@@ -7,6 +7,7 @@
     "build": "npm run clean && npm run transpile",
     "clean": "rimraf dist",
     "dev": "nodemon --exec babel-node src/index.js",
+    "lint": "npx eslint . --ignore-path .gitignore --fix",
     "prettier": "npx prettier --config package.json --write 'src/**/*.js'",
     "prod": "npm run build && NODE_ENV=production node dist/index.js",
     "test": "yarn jest",
@@ -73,7 +74,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run test-only-changed",
+      "pre-commit": "yarn lint && yarn run test-only-changed",
       "pre-push": "npm run prettier && npm test"
     }
   },

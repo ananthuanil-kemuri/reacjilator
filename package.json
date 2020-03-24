@@ -76,11 +76,11 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && yarn run test-only-changed",
-      "pre-push": "npm run prettier && npm test"
+      "pre-push": "npm test"
     }
   },
   "lint-staged": {
-    "*.js": ["yarn lint", "git add"]
+    "*.js": ["yarn lint", "yarn prettier"]
   },
   "prettier": {
     "semi": false,

@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   )
-  ChannelLanguage.associate = function() {
-  }
+  ChannelLanguage.associate = function() {}
   return ChannelLanguage
 }

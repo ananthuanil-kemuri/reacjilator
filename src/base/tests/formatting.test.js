@@ -81,7 +81,7 @@ test('formatText formats strikethroughs properly', () => {
   }
 })
 
-test('formatText formats strikethroughs properly', () => {
+test('formatText formats quoted text properly', () => {
   const inputsExpectedOutput = {
     '& gt; nice': '&gt; nice'
   }

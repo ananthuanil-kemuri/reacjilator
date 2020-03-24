@@ -3,13 +3,12 @@ const qs = require('qs')
 
 const { formatText } = require('../base/formatting')
 
-import { slackAPIURL } from '../config'
+import config from '../config'
 
 export class SlackService {
-  apiURL = slackAPIURL
+  apiURL = config.slackAPIURL
   botAccessToken = process.env.SLACK_BOT_USER_ACCESS_TOKEN
   async getThreadMessages(channel, ts) {
-    console.log('token', this.botAccessToken)
     const args = {
       token: this.botAccessToken,
       channel,
@@ -17,10 +16,16 @@ export class SlackService {
       limit: 1,
       inclusive: true
     }
-    const result = await axios.post(
-      `${this.apiURL}/conversations.replies`,
-      qs.stringify(args)
-    )
+    let result
+    try {
+      result = await axios.post(
+        `${this.apiURL}/conversations.replies`,
+        qs.stringify(args)
+      )
+    } catch (err) {
+      console.error(err)
+      throw new Error(err)
+    }
     if (!result.data.ok) throw JSON.stringify(result.data)
     return result.data.messages
   }

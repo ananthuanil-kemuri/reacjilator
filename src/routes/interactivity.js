@@ -1,5 +1,5 @@
 import { allowedSlackLanguageChoicesToLangCode } from './../controllers/channelLanguage'
-import { postTranslatedMessage } from './events'
+import { getParentMsgTsAndIsInthread, postTranslatedMessage } from './events'
 
 export default function(app, services) {
   app.post('/api/interactivity', async (req, res) => {
@@ -7,17 +7,26 @@ export default function(app, services) {
     const {
       callback_id,
       channel,
-      message: { text, ts }
+      message: { text, thread_ts, ts }
     } = payload
     switch (callback_id) {
       case 'translate_to_chinese': {
         res.sendStatus(200)
+        let parent_msg_ts, is_in_thread
+        const threadData = await getParentMsgTsAndIsInthread(
+          thread_ts,
+          ts,
+          channel.id,
+          services
+        )
+        parent_msg_ts = threadData.parent_msg_ts
+        is_in_thread = threadData.is_in_thread
         await postTranslatedMessage(
           text,
-          ts,
+          parent_msg_ts,
           allowedSlackLanguageChoicesToLangCode.chinese,
           channel.id,
-          false,
+          is_in_thread,
           [],
           services
         )

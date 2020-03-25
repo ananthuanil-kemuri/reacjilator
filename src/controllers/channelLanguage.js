@@ -1,12 +1,11 @@
 const models = require('../models')
-import { postMessage } from './../routes/events'
 
 const allowedSlackLanguageChoicesToLangCode = {
   english: 'en',
   chinese: 'zh-CN'
 }
 
-function create(req, res) {
+function create(req, res, services) {
   const slackLangChoice = req.body.text
   return models.ChannelLanguage.findOrCreate({
     where: {
@@ -30,7 +29,13 @@ function create(req, res) {
         })
         .then(() => res.status(201).send(''))
       const successMsg = `Set channel language to ${slackLangChoice}!`
-      await postMessage(successMsg, null, req.body.channel_id, [], false)
+      await services.slackService.postMessage(
+        successMsg,
+        null,
+        req.body.channel_id,
+        [],
+        false
+      )
     })
     .catch(error => {
       console.error(error)

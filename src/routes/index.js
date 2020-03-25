@@ -8,5 +8,5 @@ module.exports = (app, services) => {
     })
   )
   events(app, services)
-  channelLanguage(app)
+  channelLanguage(app, services)
 }

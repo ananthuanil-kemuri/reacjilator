@@ -14,10 +14,19 @@ export default function(app, services) {
         )
         break
       }
-      default: {
-        throw new InvalidInteractivityCallbackId(
-          `Invalid callback_id: ${payload.callback_id}`
+      case 'translate_to_english': {
+        res.sendStatus(200)
+        await handleManualTranslation(
+          payload,
+          allowedSlackLanguageChoicesToLangCode.english,
+          services
         )
+        break
+      }
+      default: {
+        const errorMsg = `Invalid callback_id: ${payload.callback_id}`
+        res.sendStatus(500).send(errorMsg)
+        throw new InvalidInteractivityCallbackId(errorMsg)
       }
     }
   })

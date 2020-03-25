@@ -73,6 +73,10 @@ Get your Google Cloud project ID and API key at [cloud.google.com](https://cloud
 
 *When you deploy to Heroku, the request URL for the **Event Subscription** section on Slack App config page would be: `https://slack-reacjilator.herokuapp.com/events`*
 
+## Rolling back to a previous commit
+1. `git checkout [commit hash]`
+2. `git push heroku HEAD:master -f`
+
 ### Google Cloud Functions
 
 Please refer the `google-cloud-functions` branch.

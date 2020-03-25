@@ -1,4 +1,6 @@
 const { Translate } = require('@google-cloud/translate').v2
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
 export class GoogleCloudService {
   credentials = {

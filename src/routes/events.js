@@ -93,7 +93,7 @@ const events = async (req, res, services) => {
   }
 }
 
-const getParentMsgTsAndIsInthread = async (
+export const getParentMsgTsAndIsInthread = async (
   thread_ts,
   ts,
   channel,
@@ -129,7 +129,7 @@ const doesMessageNeedTranslating = async (
   return compareDetectedTargetLang(detectedLang, targetLang)
 }
 
-const postTranslatedMessage = async (
+export const postTranslatedMessage = async (
   origText,
   ts,
   targetLang,

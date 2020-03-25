@@ -1,6 +1,6 @@
 const models = require('../models')
 
-const allowedSlackLanguageChoicesToLangCode = {
+export const allowedSlackLanguageChoicesToLangCode = {
   english: 'en',
   chinese: 'zh-CN'
 }

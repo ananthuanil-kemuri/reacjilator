@@ -5,7 +5,7 @@ export const allowedSlackLanguageChoicesToLangCode = {
   chinese: 'zh-CN'
 }
 
-function create(req, res, services) {
+export default function createOrUpdate(req, res, services) {
   const slackLangChoice = req.body.text
   return models.ChannelLanguage.findOrCreate({
     where: {
@@ -42,5 +42,3 @@ function create(req, res, services) {
       res.status(400).send(error)
     })
 }
-
-export default { create }

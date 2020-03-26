@@ -1,6 +1,6 @@
-# Slacklator
+# Diplobot
 
-Slacklator translates a message that is not in English to English by making a post below the original message.
+Diplobot is a Slack app that translates messages automatically or manually to a target message.
 
 Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
 
@@ -76,7 +76,3 @@ Get your Google Cloud project ID and API key at [cloud.google.com](https://cloud
 ## Rolling back to a previous commit
 1. `git checkout [commit hash]`
 2. `git push heroku HEAD:master -f`
-
-### Google Cloud Functions
-
-Please refer the `google-cloud-functions` branch.

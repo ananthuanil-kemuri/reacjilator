@@ -1,8 +1,12 @@
 # Diplobot
 
-Diplobot is a Slack app that translates messages automatically or manually to a target message.
+Diplobot is a Slack app that translates messages automatically or manually to a target message. It currently supports English/Chinese as target languages.
 
 Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
+
+### Credentials
+
+Duplicate the `.env-test` file to `.env`. See instructions below for how to obtain credentials/API keys for Slack and Google Cloud Translation API.
 
 ## Set Up Your Slack App
 
@@ -29,7 +33,13 @@ Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
  - "messsage.mpim"
 
 ## Set Up Your Google Cloud Project
-TODO
+
+1. Create a new Google Cloud project at [Google Cloud](https://console.cloud.google.com/).
+2. Add the project id to `.env` as `GOOGLE_PROJECT_ID`.
+2. Enable the `Cloud Translation API`.
+2. Create an API Key and restrict it to `Cloud Translation API`.
+3. Add the key to `.env` under `GOOGLE_TRANSLATE_API_KEY`
+
 
 ## Development
 
@@ -38,12 +48,12 @@ Requirements:
 - node v10+
 - npm
 - sequelize CLI: `npm i -g sequelize-cli`
+- (ngrok)[https://dashboard.ngrok.com/get-started]: to expose a URL which tunnels to local port for Slack API events.
 
-1. Install (ngrok)[https://dashboard.ngrok.com/get-started] to expose a URL that forwards to the app running locally.
-2. `npm run start-dev`
-3. `[path to ngrok]/ngrok http 5000`
-4. Get the forwarded https URL, append `/events`, and set it as the Request URL under `api.slack.com/apps` -> [App Name] -> Event Subscriptions. 
-5. Start the db: `docker run --name reacjilator-db --publish 6000:5432 --env POSTGRES_USER=admin --env POSTGRES_PASSWORD=admin --env POSTGRES_DB=reacjilator --detach postgres:10.6`
+1. `npm run start-dev`
+2. `[path to ngrok]/ngrok http 5000`
+3. Get the forwarded https URL, append `/events`, and set it as the Request URL under `api.slack.com/apps` -> [App Name] -> Event Subscriptions. 
+4. Start the db: `docker run --name reacjilator-db --publish 6000:5432 --env POSTGRES_USER=admin --env POSTGRES_PASSWORD=admin --env POSTGRES_DB=diplobot --detach postgres:10.6`
 
 ```sh
 # Generating db models
@@ -52,15 +62,6 @@ sequelize model:create --name [Table Name] --attributes [column1]:[type], [colum
 # Upgrading dev database schema
 sequelize db:migrate
 ```
-
-
-### Credentials
-
-Rename the `.env_test` to `.env` and fill the env vars with your credentials. You also need Google credentials to use the Google translation API:
-
-Get Your Slack credentials at **Basic Information**, auth token at **OAuth & Permissions**.
-
-Get your Google Cloud project ID and API key at [cloud.google.com](https://cloud.google.com/translate/docs/getting-started)
 
 
 ## Deployment

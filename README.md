@@ -4,7 +4,7 @@ Diplobot is a Slack app that translates messages automatically or manually to a 
 
 Based on [reacjilator by girliemac](https://github.com/slackapi/reacjilator).
 
-### Credentials
+## Credentials
 
 Duplicate the `.env-test` file to `.env`. See instructions below for how to obtain credentials/API keys for Slack and Google Cloud Translation API.
 
@@ -40,7 +40,6 @@ Duplicate the `.env-test` file to `.env`. See instructions below for how to obta
 2. Create an API Key and restrict it to `Cloud Translation API`.
 3. Add the key to `.env` under `GOOGLE_TRANSLATE_API_KEY`
 
-
 ## Development
 
 Requirements:
@@ -63,7 +62,6 @@ sequelize model:create --name [Table Name] --attributes [column1]:[type], [colum
 sequelize db:migrate
 ```
 
-
 ## Deployment
 
 ### Heroku
@@ -74,6 +72,6 @@ sequelize db:migrate
 
 *When you deploy to Heroku, the request URL for the **Event Subscription** section on Slack App config page would be: `https://slack-reacjilator.herokuapp.com/events`*
 
-## Rolling back to a previous commit
+### Rolling back to a previous commit
 1. `git checkout [commit hash]`
 2. `git push heroku HEAD:master -f`

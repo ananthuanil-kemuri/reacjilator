@@ -5,7 +5,7 @@ import 'regenerator-runtime/runtime'
 export class GoogleCloudService {
   credentials = {
     projectId: process.env.GOOGLE_PROJECT_ID,
-    key: process.env.GOOGLE_KEY
+    key: process.env.GOOGLE_TRANSLATE_API_KEY
   }
   googleTranslateClient = undefined
   constructor() {
